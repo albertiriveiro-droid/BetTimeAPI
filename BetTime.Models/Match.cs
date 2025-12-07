@@ -14,6 +14,10 @@ public class Match
     public Team? AwayTeam { get; set; }
 
     public DateTime StartTime { get; set; }
+
+    public decimal HomeOdds { get; set; }
+    public decimal DrawOdds { get; set; }
+    public decimal AwayOdds { get; set; }
     public int? HomeScore { get; set; }
     public int? AwayScore { get; set; }
     public bool Finished { get; set; }
@@ -22,12 +26,15 @@ public class Match
 
     public Match(){}
 
-    public Match(int leagueId, int homeTeamId, int awayTeamId, DateTime startTime)
+    public Match(int leagueId, int homeTeamId, int awayTeamId, DateTime startTime, decimal homeOdds, decimal drawOdds, decimal awayOdds)
     {
         LeagueId = leagueId;
         HomeTeamId = homeTeamId;
         AwayTeamId = awayTeamId;
         StartTime = startTime;
+        HomeOdds= homeOdds;
+        DrawOdds= drawOdds;
+        AwayOdds= awayOdds;
         Finished = false;
         Bets = new List<Bet>();
     }
