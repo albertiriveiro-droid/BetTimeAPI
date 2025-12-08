@@ -11,8 +11,8 @@ public interface IBetService
 
     IEnumerable<Bet> GetActiveBets();
     IEnumerable<Bet> GetFinishedBets();
-    IEnumerable<Bet> GetWonBets(int userId);
-    IEnumerable<Bet> GetLostBets(int userId);
+    IEnumerable<BetOutputDTO> GetWonBets(int userId);
+    IEnumerable<BetOutputDTO> GetLostBets(int userId);
 
     Bet ResolveBet(int betId);               
     void ResolveBetsForMatch(int matchId);   

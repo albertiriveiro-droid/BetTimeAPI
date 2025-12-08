@@ -84,14 +84,28 @@ var user= _userRepository.GetUserById(betCreateDTO.UserId);
 
     }
 
-    public IEnumerable<Bet> GetActiveBets() => _repository.GetActiveBets();
+    public IEnumerable<Bet> GetActiveBets()
+    {
+        return  _repository.GetActiveBets();  
+    } 
 
-    public IEnumerable<Bet> GetFinishedBets() => _repository.GetFinishedBets();
+    public IEnumerable<Bet> GetFinishedBets()
+    {
+        return _repository.GetFinishedBets();  
+    } 
 
-    public IEnumerable<Bet> GetWonBets(int userId) => _repository.GetWonBets(userId);
-
-    public IEnumerable<Bet> GetLostBets(int userId) => _repository.GetLostBets(userId);
-
+   public IEnumerable<BetOutputDTO> GetWonBets(int userId)
+{
+        return _repository
+            .GetWonBets(userId)
+            .Select(b => MapToDTO(b));
+}
+   public IEnumerable<BetOutputDTO> GetLostBets(int userId)
+{
+        return _repository
+            .GetLostBets(userId)
+            .Select(b => MapToDTO(b));
+}
     public Bet ResolveBet(int betId)
     {
         var bet = _repository.GetBetById(betId)
@@ -153,5 +167,20 @@ var user= _userRepository.GetUserById(betCreateDTO.UserId);
             _repository.UpdateBet(bet);
         }
     }
+
+    private BetOutputDTO MapToDTO(Bet bet)
+{
+    return new BetOutputDTO
+    {
+        Id = bet.Id,
+        MatchId = bet.MatchId,
+        Prediction = bet.Prediction,
+        AmountBet = bet.Amount,
+        Odds = bet.Odds,
+        Won = bet.Won,
+        AmountWon = bet.Won == true ? bet.Amount * bet.Odds : 0,
+        Date = bet.PlacedAt
+    };
+}
 
 }
