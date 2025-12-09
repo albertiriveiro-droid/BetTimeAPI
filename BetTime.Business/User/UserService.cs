@@ -27,6 +27,15 @@ public IEnumerable<User> GetAllUsers()
     {
      return _repository.GetAllUsers();  
     }
+public User GetUserByEmail(string email){
+    try{
+     return _repository.GetUserByEmail(email);
+    }
+     catch(Exception e){
+           
+     throw new Exception("An error has ocurred getting the user", e);
+    }
+    }
 
 public User GetUserById(int userId)
     {
@@ -72,4 +81,23 @@ public bool IsEmailTaken(string email)
         return _repository.GetAllUsers()
         .Any(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
     }
+
+
+public User loginCheck(string email, string password)
+{
+    if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+    {
+        throw new ArgumentException("Email and password are obligatory.");
+    }
+
+    foreach (var userToLog in _repository.GetAllUsers())
+    {
+        if (userToLog.Email.Equals(email, StringComparison.OrdinalIgnoreCase) &&
+            userToLog.Password.Equals(password))
+        {
+            return userToLog;
+        }
+    }
+    return null;
+}  
 }

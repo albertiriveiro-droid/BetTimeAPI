@@ -25,6 +25,12 @@ public IEnumerable<User> GetAllUsers()
         var users= _context.Users;
          return users;     
         }
+        
+ public User GetUserByEmail(string UserEmail)
+    {
+        var user = _context.Users.FirstOrDefault(user => user.Email == UserEmail);
+        return user;
+    }
 public User GetUserById( int UserId)
     {
       var user = _context.Users.FirstOrDefault(user => user.Id == UserId);

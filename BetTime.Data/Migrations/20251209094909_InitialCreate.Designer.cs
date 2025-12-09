@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BetTime.Data.Migrations
 {
     [DbContext(typeof(BetTimeContext))]
-    [Migration("20251208201644_InitialCreate")]
+    [Migration("20251209094909_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,13 +33,13 @@ namespace BetTime.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Odds")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("PlacedAt")
                         .HasColumnType("datetime2");
@@ -94,7 +94,7 @@ namespace BetTime.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<decimal>("AwayOdds")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int?>("AwayScore")
                         .HasColumnType("int");
@@ -103,13 +103,13 @@ namespace BetTime.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("DrawOdds")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<bool>("Finished")
                         .HasColumnType("bit");
 
                     b.Property<decimal>("HomeOdds")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int?>("HomeScore")
                         .HasColumnType("int");
@@ -182,7 +182,7 @@ namespace BetTime.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -226,6 +226,10 @@ namespace BetTime.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

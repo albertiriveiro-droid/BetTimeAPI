@@ -32,7 +32,8 @@ namespace BetTime.Data.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,7 +67,7 @@ namespace BetTime.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -113,9 +114,9 @@ namespace BetTime.Data.Migrations
                     HomeTeamId = table.Column<int>(type: "int", nullable: false),
                     AwayTeamId = table.Column<int>(type: "int", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    HomeOdds = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DrawOdds = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AwayOdds = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    HomeOdds = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    DrawOdds = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    AwayOdds = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     HomeScore = table.Column<int>(type: "int", nullable: true),
                     AwayScore = table.Column<int>(type: "int", nullable: true),
                     Finished = table.Column<bool>(type: "bit", nullable: false)
@@ -151,8 +152,8 @@ namespace BetTime.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     MatchId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Odds = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Odds = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Prediction = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Won = table.Column<bool>(type: "bit", nullable: true),
                     PlacedAt = table.Column<DateTime>(type: "datetime2", nullable: false)

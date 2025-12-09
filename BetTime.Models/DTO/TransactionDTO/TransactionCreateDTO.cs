@@ -14,6 +14,5 @@ public class TransactionCreateDTO
     [Required]
     public string? Type { get; set; }
 
-    [Required]
     public string? PaymentMethod { get; set; }
 }

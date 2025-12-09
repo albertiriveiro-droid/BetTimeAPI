@@ -3,13 +3,31 @@ using BetTime.Data;
 using Microsoft.EntityFrameworkCore;
 
 using BetTime.Business;
-using System.Text.Json.Serialization;;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
+;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(opt =>
+    {
+        opt.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
+        };
+    });
 
 // Servicios del negocio y repositorios
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISportService, SportService>();
 builder.Services.AddScoped<ILeagueService, LeagueService>();
@@ -32,11 +50,7 @@ builder.Services.AddDbContext<BetTimeContext>(options =>
     options.UseSqlServer(connectionString));
 
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
+
 
 builder.Services.AddCors(options =>
 {
@@ -56,6 +70,33 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "BetTime API", Version = "v1" });
+
+    // Configure the security scheme for JWT
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
 var app = builder.Build();
 
 
@@ -67,7 +108,7 @@ var app = builder.Build();
     }
 
 
-
+app.UseCors("MyAllowedOrigins");
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -75,9 +116,10 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseHttpsRedirection();
-app.UseCors("MyAllowedOrigins");
+
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
