@@ -76,6 +76,12 @@ namespace BetTime.Data;
                 .ToList();
         }
 
+        public IEnumerable<Match> GetPendingMatches(DateTime currentTime)
+        {
+            return _context.Matches
+                .Where(m => !m.Finished && m.StartTime <= currentTime)
+                .ToList();
+        }
         public void UpdateMatch(Match match)
         {
             _context.Entry(match).State = EntityState.Modified;

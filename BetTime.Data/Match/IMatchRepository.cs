@@ -10,6 +10,7 @@ namespace BetTime.Data
         IEnumerable<Match> GetMatchesByTeam(int teamId);
         IEnumerable<Match> GetUpcomingMatches();
         IEnumerable<Match> GetFinishedMatches();
+        IEnumerable<Match> GetPendingMatches(DateTime currentTime);
         void UpdateMatch(Match match);
         void DeleteMatch(Match match);
         void SaveChanges();

@@ -52,6 +52,8 @@ var user= _userRepository.GetUserById(betCreateDTO.UserId);
             "AWAY" => match.AwayOdds,
             _ => throw new Exception("Unexpected prediction")
         };
+         user.Balance -= betCreateDTO.Amount;
+        _userRepository.UpdateUser(user);
         var bet= new Bet(betCreateDTO.UserId, betCreateDTO.MatchId, betCreateDTO.Amount, odds, prediction);
         _repository.AddBet(bet);
         return bet;

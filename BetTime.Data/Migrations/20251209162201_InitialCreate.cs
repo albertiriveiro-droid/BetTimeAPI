@@ -117,8 +117,14 @@ namespace BetTime.Data.Migrations
                     HomeOdds = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     DrawOdds = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     AwayOdds = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    HomeScore = table.Column<int>(type: "int", nullable: true),
-                    AwayScore = table.Column<int>(type: "int", nullable: true),
+                    HomeScore = table.Column<int>(type: "int", nullable: false),
+                    AwayScore = table.Column<int>(type: "int", nullable: false),
+                    DurationMinutes = table.Column<int>(type: "int", nullable: false),
+                    CurrentMinute = table.Column<int>(type: "int", nullable: false),
+                    IsLive = table.Column<bool>(type: "bit", nullable: false),
+                    HomeWinProbability = table.Column<double>(type: "float", nullable: false),
+                    DrawProbability = table.Column<double>(type: "float", nullable: false),
+                    AwayWinProbability = table.Column<double>(type: "float", nullable: false),
                     Finished = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -174,6 +180,81 @@ namespace BetTime.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Sports",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { 1, "Fútbol" });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Balance", "CreatedAt", "Email", "Password", "Role", "Username" },
+                values: new object[,]
+                {
+                    { 1, 100m, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "juan@example.com", "pass123", "user", "juan123" },
+                    { 2, 150m, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "albertoriveiro@hotmail.es", "pass456", "admin", "albertorbd" },
+                    { 3, 120m, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "laura@example.com", "pass789", "user", "laura234" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Leagues",
+                columns: new[] { "Id", "Name", "SportId" },
+                values: new object[,]
+                {
+                    { 1, "LaLiga", 1 },
+                    { 2, "Bundesliga", 1 },
+                    { 3, "Premier League", 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Transactions",
+                columns: new[] { "Id", "Amount", "Date", "Note", "PaymentMethod", "Type", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 50m, new DateTime(2025, 12, 7, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8985), null, "Tarjeta", "DEPOSIT", 1 },
+                    { 2, 25m, new DateTime(2025, 12, 8, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8991), null, "PayPal", "DEPOSIT", 1 },
+                    { 3, 100m, new DateTime(2025, 12, 6, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8992), null, "Tarjeta", "DEPOSIT", 2 },
+                    { 4, 50m, new DateTime(2025, 12, 8, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8994), null, "PayPal", "WITHDRAW", 2 },
+                    { 5, 75m, new DateTime(2025, 12, 7, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8995), null, "Tarjeta", "DEPOSIT", 3 },
+                    { 6, 30m, new DateTime(2025, 12, 8, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8996), null, "PayPal", "WITHDRAW", 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Teams",
+                columns: new[] { "Id", "LeagueId", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, "Real Madrid" },
+                    { 2, 1, "Barcelona" },
+                    { 3, 1, "Atlético Madrid" },
+                    { 4, 1, "Sevilla" },
+                    { 5, 1, "Valencia" },
+                    { 6, 2, "Bayern Munich" },
+                    { 7, 2, "Borussia Dortmund" },
+                    { 8, 2, "RB Leipzig" },
+                    { 9, 2, "Bayer Leverkusen" },
+                    { 10, 2, "Schalke 04" },
+                    { 11, 3, "Manchester United" },
+                    { 12, 3, "Liverpool" },
+                    { 13, 3, "Chelsea" },
+                    { 14, 3, "Arsenal" },
+                    { 15, 3, "Manchester City" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Matches",
+                columns: new[] { "Id", "AwayOdds", "AwayScore", "AwayTeamId", "AwayWinProbability", "CurrentMinute", "DrawOdds", "DrawProbability", "DurationMinutes", "Finished", "HomeOdds", "HomeScore", "HomeTeamId", "HomeWinProbability", "IsLive", "LeagueId", "StartTime" },
+                values: new object[] { 1, 4.0m, 0, 2, 0.0, 0, 3.2m, 0.0, 90, false, 1.8m, 0, 1, 0.0, false, 1, new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Unspecified) });
+
+            migrationBuilder.InsertData(
+                table: "Matches",
+                columns: new[] { "Id", "AwayOdds", "AwayScore", "AwayTeamId", "AwayWinProbability", "CurrentMinute", "DrawOdds", "DrawProbability", "DurationMinutes", "Finished", "HomeOdds", "HomeScore", "HomeTeamId", "HomeWinProbability", "IsLive", "LeagueId", "StartTime" },
+                values: new object[] { 2, 5.0m, 0, 7, 0.0, 0, 3.5m, 0.0, 90, false, 1.5m, 0, 6, 0.0, false, 2, new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Unspecified) });
+
+            migrationBuilder.InsertData(
+                table: "Matches",
+                columns: new[] { "Id", "AwayOdds", "AwayScore", "AwayTeamId", "AwayWinProbability", "CurrentMinute", "DrawOdds", "DrawProbability", "DurationMinutes", "Finished", "HomeOdds", "HomeScore", "HomeTeamId", "HomeWinProbability", "IsLive", "LeagueId", "StartTime" },
+                values: new object[] { 3, 3.5m, 0, 12, 0.0, 0, 3.0m, 0.0, 90, false, 2.0m, 0, 11, 0.0, false, 3, new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bets_MatchId",

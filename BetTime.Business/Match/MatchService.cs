@@ -39,7 +39,7 @@ public Match CreateMatch(MatchCreateDTO matchCreateDTO)
             throw new ArgumentException("Odds must be greater than 1.00");
 
     var match= new Match(matchCreateDTO.LeagueId, matchCreateDTO.HomeTeamId, matchCreateDTO.AwayTeamId, 
-    matchCreateDTO.StartTime, matchCreateDTO.HomeOdds, matchCreateDTO.DrawOdds, matchCreateDTO.AwayOdds);
+    matchCreateDTO.StartTime, matchCreateDTO.HomeOdds, matchCreateDTO.DrawOdds, matchCreateDTO.AwayOdds, matchCreateDTO.DurationMinutes);
 
     _repository.AddMatch(match);
     return match;

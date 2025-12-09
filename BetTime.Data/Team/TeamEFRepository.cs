@@ -22,8 +22,10 @@ public void AddTeam(Team team)
 
 public IEnumerable<Team> GetAllTeams()
     {
-    var teams= _context.Teams;
-    return teams;
+     return _context.Teams
+        .Include(t => t.HomeMatches)   
+        .Include(t => t.AwayMatches)   
+        .ToList();
     }
 public IEnumerable<Team> GetTeamsByLeague(int leagueId)
 {

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BetTime.Data.Migrations
 {
     [DbContext(typeof(BetTimeContext))]
-    [Migration("20251209094909_InitialCreate")]
+    [Migration("20251209162201_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,6 +83,26 @@ namespace BetTime.Data.Migrations
                     b.HasIndex("SportId");
 
                     b.ToTable("Leagues");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "LaLiga",
+                            SportId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Bundesliga",
+                            SportId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Premier League",
+                            SportId = 1
+                        });
                 });
 
             modelBuilder.Entity("BetTime.Models.Match", b =>
@@ -96,14 +116,26 @@ namespace BetTime.Data.Migrations
                     b.Property<decimal>("AwayOdds")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int?>("AwayScore")
+                    b.Property<int>("AwayScore")
                         .HasColumnType("int");
 
                     b.Property<int>("AwayTeamId")
                         .HasColumnType("int");
 
+                    b.Property<double>("AwayWinProbability")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CurrentMinute")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("DrawOdds")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<double>("DrawProbability")
+                        .HasColumnType("float");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Finished")
                         .HasColumnType("bit");
@@ -111,11 +143,17 @@ namespace BetTime.Data.Migrations
                     b.Property<decimal>("HomeOdds")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int?>("HomeScore")
+                    b.Property<int>("HomeScore")
                         .HasColumnType("int");
 
                     b.Property<int>("HomeTeamId")
                         .HasColumnType("int");
+
+                    b.Property<double>("HomeWinProbability")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("IsLive")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LeagueId")
                         .HasColumnType("int");
@@ -132,6 +170,68 @@ namespace BetTime.Data.Migrations
                     b.HasIndex("LeagueId");
 
                     b.ToTable("Matches");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AwayOdds = 4.0m,
+                            AwayScore = 0,
+                            AwayTeamId = 2,
+                            AwayWinProbability = 0.0,
+                            CurrentMinute = 0,
+                            DrawOdds = 3.2m,
+                            DrawProbability = 0.0,
+                            DurationMinutes = 90,
+                            Finished = false,
+                            HomeOdds = 1.8m,
+                            HomeScore = 0,
+                            HomeTeamId = 1,
+                            HomeWinProbability = 0.0,
+                            IsLive = false,
+                            LeagueId = 1,
+                            StartTime = new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AwayOdds = 5.0m,
+                            AwayScore = 0,
+                            AwayTeamId = 7,
+                            AwayWinProbability = 0.0,
+                            CurrentMinute = 0,
+                            DrawOdds = 3.5m,
+                            DrawProbability = 0.0,
+                            DurationMinutes = 90,
+                            Finished = false,
+                            HomeOdds = 1.5m,
+                            HomeScore = 0,
+                            HomeTeamId = 6,
+                            HomeWinProbability = 0.0,
+                            IsLive = false,
+                            LeagueId = 2,
+                            StartTime = new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AwayOdds = 3.5m,
+                            AwayScore = 0,
+                            AwayTeamId = 12,
+                            AwayWinProbability = 0.0,
+                            CurrentMinute = 0,
+                            DrawOdds = 3.0m,
+                            DrawProbability = 0.0,
+                            DurationMinutes = 90,
+                            Finished = false,
+                            HomeOdds = 2.0m,
+                            HomeScore = 0,
+                            HomeTeamId = 11,
+                            HomeWinProbability = 0.0,
+                            IsLive = false,
+                            LeagueId = 3,
+                            StartTime = new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("BetTime.Models.Sport", b =>
@@ -149,6 +249,13 @@ namespace BetTime.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Sports");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Fútbol"
+                        });
                 });
 
             modelBuilder.Entity("BetTime.Models.Team", b =>
@@ -171,6 +278,98 @@ namespace BetTime.Data.Migrations
                     b.HasIndex("LeagueId");
 
                     b.ToTable("Teams");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LeagueId = 1,
+                            Name = "Real Madrid"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LeagueId = 1,
+                            Name = "Barcelona"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LeagueId = 1,
+                            Name = "Atlético Madrid"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            LeagueId = 1,
+                            Name = "Sevilla"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            LeagueId = 1,
+                            Name = "Valencia"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            LeagueId = 2,
+                            Name = "Bayern Munich"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            LeagueId = 2,
+                            Name = "Borussia Dortmund"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            LeagueId = 2,
+                            Name = "RB Leipzig"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            LeagueId = 2,
+                            Name = "Bayer Leverkusen"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            LeagueId = 2,
+                            Name = "Schalke 04"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            LeagueId = 3,
+                            Name = "Manchester United"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            LeagueId = 3,
+                            Name = "Liverpool"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            LeagueId = 3,
+                            Name = "Chelsea"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            LeagueId = 3,
+                            Name = "Arsenal"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            LeagueId = 3,
+                            Name = "Manchester City"
+                        });
                 });
 
             modelBuilder.Entity("BetTime.Models.Transaction", b =>
@@ -205,6 +404,62 @@ namespace BetTime.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Transactions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Amount = 50m,
+                            Date = new DateTime(2025, 12, 7, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8985),
+                            PaymentMethod = "Tarjeta",
+                            Type = "DEPOSIT",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Amount = 25m,
+                            Date = new DateTime(2025, 12, 8, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8991),
+                            PaymentMethod = "PayPal",
+                            Type = "DEPOSIT",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Amount = 100m,
+                            Date = new DateTime(2025, 12, 6, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8992),
+                            PaymentMethod = "Tarjeta",
+                            Type = "DEPOSIT",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Amount = 50m,
+                            Date = new DateTime(2025, 12, 8, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8994),
+                            PaymentMethod = "PayPal",
+                            Type = "WITHDRAW",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Amount = 75m,
+                            Date = new DateTime(2025, 12, 7, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8995),
+                            PaymentMethod = "Tarjeta",
+                            Type = "DEPOSIT",
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Amount = 30m,
+                            Date = new DateTime(2025, 12, 8, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8996),
+                            PaymentMethod = "PayPal",
+                            Type = "WITHDRAW",
+                            UserId = 3
+                        });
                 });
 
             modelBuilder.Entity("BetTime.Models.User", b =>
@@ -240,6 +495,38 @@ namespace BetTime.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Balance = 100m,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "juan@example.com",
+                            Password = "pass123",
+                            Role = "user",
+                            Username = "juan123"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Balance = 150m,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "albertoriveiro@hotmail.es",
+                            Password = "pass456",
+                            Role = "admin",
+                            Username = "albertorbd"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Balance = 120m,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "laura@example.com",
+                            Password = "pass789",
+                            Role = "user",
+                            Username = "laura234"
+                        });
                 });
 
             modelBuilder.Entity("BetTime.Models.Bet", b =>

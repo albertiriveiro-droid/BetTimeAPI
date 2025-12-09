@@ -86,7 +86,7 @@ public class BetController : ControllerBase
     }
 
   
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin + "," + Roles.User)]
     [HttpPost]
     public IActionResult CreateBet([FromBody] BetCreateDTO betCreateDTO)
     {
