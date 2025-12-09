@@ -1,11 +1,17 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
 namespace BetTime.Models;
 
 public class Team
-{
+{   [Key]
     public int Id { get; set; }
+    [Required]
     public string Name { get; set; } = null!;
-
+    [ForeignKey("League")]
     public int LeagueId { get; set; }
+    [JsonIgnore]
     public League? League { get; set; }
 
     public ICollection<Match> HomeMatches { get; set; }
