@@ -22,7 +22,10 @@ public class BetEFRepository : IBetRepository
     {
         return _context.Bets
             .Include(b => b.User)
+            .Include(b => b.MarketSelection)   
             .Include(b => b.Match)
+                .ThenInclude(m => m.Markets)
+                    .ThenInclude(mk => mk.Selections)
             .ToList();
     }
 
@@ -30,7 +33,10 @@ public class BetEFRepository : IBetRepository
     {
         return _context.Bets
             .Include(b => b.User)
+            .Include(b => b.MarketSelection)   
             .Include(b => b.Match)
+                .ThenInclude(m => m.Markets)
+                    .ThenInclude(mk => mk.Selections)
             .FirstOrDefault(b => b.Id == betId);
     }
 
@@ -38,7 +44,10 @@ public class BetEFRepository : IBetRepository
     {
         return _context.Bets
             .Where(b => b.UserId == userId)
+            .Include(b => b.MarketSelection)  
             .Include(b => b.Match)
+                .ThenInclude(m => m.Markets)
+                    .ThenInclude(mk => mk.Selections)
             .ToList();
     }
 
@@ -47,6 +56,10 @@ public class BetEFRepository : IBetRepository
         return _context.Bets
             .Where(b => b.MatchId == matchId)
             .Include(b => b.User)
+            .Include(b => b.MarketSelection)   
+            .Include(b => b.Match)
+                .ThenInclude(m => m.Markets)
+                    .ThenInclude(mk => mk.Selections)
             .ToList();
     }
 
@@ -54,15 +67,21 @@ public class BetEFRepository : IBetRepository
     {
         return _context.Bets
             .Where(b => b.Won == null)
+            .Include(b => b.MarketSelection)  
             .Include(b => b.Match)
+                .ThenInclude(m => m.Markets)
+                    .ThenInclude(mk => mk.Selections)
             .ToList();
     }
 
     public IEnumerable<Bet> GetFinishedBets()
     {
         return _context.Bets
-            .Where(b => b.Won != null) 
+            .Where(b => b.Won != null)
+            .Include(b => b.MarketSelection)  
             .Include(b => b.Match)
+                .ThenInclude(m => m.Markets)
+                    .ThenInclude(mk => mk.Selections)
             .ToList();
     }
 
@@ -70,7 +89,10 @@ public class BetEFRepository : IBetRepository
     {
         return _context.Bets
             .Where(b => b.UserId == userId && b.Won == true)
+            .Include(b => b.MarketSelection)  
             .Include(b => b.Match)
+                .ThenInclude(m => m.Markets)
+                    .ThenInclude(mk => mk.Selections)
             .ToList();
     }
 
@@ -78,7 +100,10 @@ public class BetEFRepository : IBetRepository
     {
         return _context.Bets
             .Where(b => b.UserId == userId && b.Won == false)
+            .Include(b => b.MarketSelection)  
             .Include(b => b.Match)
+                .ThenInclude(m => m.Markets)
+                    .ThenInclude(mk => mk.Selections)
             .ToList();
     }
 

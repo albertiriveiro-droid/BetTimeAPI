@@ -33,18 +33,14 @@ namespace BetTime.Data.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int>("MarketSelectionId")
+                        .HasColumnType("int");
+
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Odds")
-                        .HasColumnType("decimal(10,2)");
-
                     b.Property<DateTime>("PlacedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Prediction")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -53,6 +49,8 @@ namespace BetTime.Data.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MarketSelectionId");
 
                     b.HasIndex("MatchId");
 
@@ -103,6 +101,210 @@ namespace BetTime.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BetTime.Models.Market", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MarketType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MatchId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
+
+                    b.ToTable("Markets");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Resultado final",
+                            MarketType = "Resultado 1X2",
+                            MatchId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Más/Menos de 2.5 goles",
+                            MarketType = "Goles Totales",
+                            MatchId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Resultado final",
+                            MarketType = "Resultado 1X2",
+                            MatchId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Más/Menos de 2.5 goles",
+                            MarketType = "Goles Totales",
+                            MatchId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Resultado final",
+                            MarketType = "Resultado 1X2",
+                            MatchId = 3
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Más/Menos de 2.5 goles",
+                            MarketType = "Goles Totales",
+                            MatchId = 3
+                        });
+                });
+
+            modelBuilder.Entity("BetTime.Models.MarketSelection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("MarketId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Odd")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Threshold")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MarketId");
+
+                    b.ToTable("MarketSelections");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            MarketId = 1,
+                            Name = "Real Madrid gana",
+                            Odd = 1.8m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            MarketId = 1,
+                            Name = "Empate",
+                            Odd = 3.2m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            MarketId = 1,
+                            Name = "Barcelona gana",
+                            Odd = 4.0m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            MarketId = 2,
+                            Name = "Más de 2.5 goles",
+                            Odd = 2.1m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            MarketId = 2,
+                            Name = "Menos de 2.5 goles",
+                            Odd = 1.7m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            MarketId = 3,
+                            Name = "Bayern Munich gana",
+                            Odd = 1.5m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            MarketId = 3,
+                            Name = "Empate",
+                            Odd = 3.5m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            MarketId = 3,
+                            Name = "Borussia Dortmund gana",
+                            Odd = 5.0m
+                        },
+                        new
+                        {
+                            Id = 9,
+                            MarketId = 4,
+                            Name = "Más de 2.5 goles",
+                            Odd = 1.9m
+                        },
+                        new
+                        {
+                            Id = 10,
+                            MarketId = 4,
+                            Name = "Menos de 2.5 goles",
+                            Odd = 2.0m
+                        },
+                        new
+                        {
+                            Id = 11,
+                            MarketId = 5,
+                            Name = "Manchester United gana",
+                            Odd = 2.0m
+                        },
+                        new
+                        {
+                            Id = 12,
+                            MarketId = 5,
+                            Name = "Empate",
+                            Odd = 3.0m
+                        },
+                        new
+                        {
+                            Id = 13,
+                            MarketId = 5,
+                            Name = "Liverpool gana",
+                            Odd = 3.5m
+                        },
+                        new
+                        {
+                            Id = 14,
+                            MarketId = 6,
+                            Name = "Más de 2.5 goles",
+                            Odd = 2.2m
+                        },
+                        new
+                        {
+                            Id = 15,
+                            MarketId = 6,
+                            Name = "Menos de 2.5 goles",
+                            Odd = 1.65m
+                        });
+                });
+
             modelBuilder.Entity("BetTime.Models.Match", b =>
                 {
                     b.Property<int>("Id")
@@ -111,8 +313,8 @@ namespace BetTime.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<decimal>("AwayOdds")
-                        .HasColumnType("decimal(10,2)");
+                    b.Property<int>("AwayCorners")
+                        .HasColumnType("int");
 
                     b.Property<int>("AwayScore")
                         .HasColumnType("int");
@@ -123,12 +325,6 @@ namespace BetTime.Data.Migrations
                     b.Property<double>("AwayWinProbability")
                         .HasColumnType("float");
 
-                    b.Property<int>("CurrentMinute")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("DrawOdds")
-                        .HasColumnType("decimal(10,2)");
-
                     b.Property<double>("DrawProbability")
                         .HasColumnType("float");
 
@@ -138,8 +334,8 @@ namespace BetTime.Data.Migrations
                     b.Property<bool>("Finished")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("HomeOdds")
-                        .HasColumnType("decimal(10,2)");
+                    b.Property<int>("HomeCorners")
+                        .HasColumnType("int");
 
                     b.Property<int>("HomeScore")
                         .HasColumnType("int");
@@ -149,9 +345,6 @@ namespace BetTime.Data.Migrations
 
                     b.Property<double>("HomeWinProbability")
                         .HasColumnType("float");
-
-                    b.Property<bool>("IsLive")
-                        .HasColumnType("bit");
 
                     b.Property<int>("LeagueId")
                         .HasColumnType("int");
@@ -173,62 +366,53 @@ namespace BetTime.Data.Migrations
                         new
                         {
                             Id = 1,
-                            AwayOdds = 4.0m,
+                            AwayCorners = 0,
                             AwayScore = 0,
                             AwayTeamId = 2,
                             AwayWinProbability = 0.0,
-                            CurrentMinute = 0,
-                            DrawOdds = 3.2m,
                             DrawProbability = 0.0,
                             DurationMinutes = 90,
                             Finished = false,
-                            HomeOdds = 1.8m,
+                            HomeCorners = 0,
                             HomeScore = 0,
                             HomeTeamId = 1,
                             HomeWinProbability = 0.0,
-                            IsLive = false,
                             LeagueId = 1,
-                            StartTime = new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2025, 12, 11, 21, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2,
-                            AwayOdds = 5.0m,
+                            AwayCorners = 0,
                             AwayScore = 0,
                             AwayTeamId = 7,
                             AwayWinProbability = 0.0,
-                            CurrentMinute = 0,
-                            DrawOdds = 3.5m,
                             DrawProbability = 0.0,
                             DurationMinutes = 90,
                             Finished = false,
-                            HomeOdds = 1.5m,
+                            HomeCorners = 0,
                             HomeScore = 0,
                             HomeTeamId = 6,
                             HomeWinProbability = 0.0,
-                            IsLive = false,
                             LeagueId = 2,
-                            StartTime = new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2025, 12, 11, 21, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 3,
-                            AwayOdds = 3.5m,
+                            AwayCorners = 0,
                             AwayScore = 0,
                             AwayTeamId = 12,
                             AwayWinProbability = 0.0,
-                            CurrentMinute = 0,
-                            DrawOdds = 3.0m,
                             DrawProbability = 0.0,
                             DurationMinutes = 90,
                             Finished = false,
-                            HomeOdds = 2.0m,
+                            HomeCorners = 0,
                             HomeScore = 0,
                             HomeTeamId = 11,
                             HomeWinProbability = 0.0,
-                            IsLive = false,
                             LeagueId = 3,
-                            StartTime = new DateTime(2025, 12, 9, 18, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartTime = new DateTime(2025, 12, 11, 21, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -408,7 +592,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 1,
                             Amount = 50m,
-                            Date = new DateTime(2025, 12, 7, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8985),
+                            Date = new DateTime(2025, 12, 9, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5585),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -417,7 +601,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 2,
                             Amount = 25m,
-                            Date = new DateTime(2025, 12, 8, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8991),
+                            Date = new DateTime(2025, 12, 10, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5590),
                             PaymentMethod = "PayPal",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -426,7 +610,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 3,
                             Amount = 100m,
-                            Date = new DateTime(2025, 12, 6, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8992),
+                            Date = new DateTime(2025, 12, 8, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5591),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 2
@@ -435,7 +619,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 4,
                             Amount = 50m,
-                            Date = new DateTime(2025, 12, 8, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8994),
+                            Date = new DateTime(2025, 12, 10, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5592),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 2
@@ -444,7 +628,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 5,
                             Amount = 75m,
-                            Date = new DateTime(2025, 12, 7, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8995),
+                            Date = new DateTime(2025, 12, 9, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5593),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 3
@@ -453,7 +637,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 6,
                             Amount = 30m,
-                            Date = new DateTime(2025, 12, 8, 16, 22, 1, 188, DateTimeKind.Utc).AddTicks(8996),
+                            Date = new DateTime(2025, 12, 10, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5594),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 3
@@ -529,10 +713,16 @@ namespace BetTime.Data.Migrations
 
             modelBuilder.Entity("BetTime.Models.Bet", b =>
                 {
+                    b.HasOne("BetTime.Models.MarketSelection", "MarketSelection")
+                        .WithMany()
+                        .HasForeignKey("MarketSelectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BetTime.Models.Match", "Match")
                         .WithMany("Bets")
                         .HasForeignKey("MatchId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("BetTime.Models.User", "User")
@@ -540,6 +730,8 @@ namespace BetTime.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("MarketSelection");
 
                     b.Navigation("Match");
 
@@ -555,6 +747,28 @@ namespace BetTime.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Sport");
+                });
+
+            modelBuilder.Entity("BetTime.Models.Market", b =>
+                {
+                    b.HasOne("BetTime.Models.Match", "Match")
+                        .WithMany("Markets")
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
+                });
+
+            modelBuilder.Entity("BetTime.Models.MarketSelection", b =>
+                {
+                    b.HasOne("BetTime.Models.Market", "Market")
+                        .WithMany("Selections")
+                        .HasForeignKey("MarketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Market");
                 });
 
             modelBuilder.Entity("BetTime.Models.Match", b =>
@@ -613,9 +827,16 @@ namespace BetTime.Data.Migrations
                     b.Navigation("Teams");
                 });
 
+            modelBuilder.Entity("BetTime.Models.Market", b =>
+                {
+                    b.Navigation("Selections");
+                });
+
             modelBuilder.Entity("BetTime.Models.Match", b =>
                 {
                     b.Navigation("Bets");
+
+                    b.Navigation("Markets");
                 });
 
             modelBuilder.Entity("BetTime.Models.Sport", b =>
