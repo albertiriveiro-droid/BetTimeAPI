@@ -2,7 +2,7 @@ using BetTime.Models;
 
 public interface IMatchService
 {
-    Match CreateMatch(MatchCreateDTO dto);
+    Match CreateMatch(MatchCreateDTO matchCreateDTO);
     IEnumerable<Match> GetAllMatches();
     Match GetMatchById(int matchId);
     IEnumerable<Match> GetMatchesByLeague(int leagueId);

@@ -1,56 +1,57 @@
-public class MatchSimulationHelper
+
+
+namespace BetTime.Business
 {
-    public class MatchResult
+    public class MatchSimulationHelper
     {
-        public int HomeScore { get; set; }
-        public int AwayScore { get; set; }
-        public List<GolEvent> GoalEvents { get; set; } = new List<GolEvent>();
-    }
-
-    public class GolEvent
-    {
-        public int Minute { get; set; }
-        public int TeamId { get; set; }
-    }
-
-    public static MatchResult SimulateMatch(decimal homeOdds, decimal drawOdds, decimal awayOdds, int durationMinutes, int homeTeamId, int awayTeamId)
-    {
-        // Probabilidades
-        double homeProb = 1.0 / (double)homeOdds;
-        double drawProb = 1.0 / (double)drawOdds;
-        double awayProb = 1.0 / (double)awayOdds;
-        double total = homeProb + drawProb + awayProb;
-        homeProb /= total;
-        drawProb /= total;
-        awayProb /= total;
-
-        Random rnd = new Random();
-
-       
-        int maxGoals = 5;
-        int homeGoals = (int)Math.Round(homeProb * maxGoals * rnd.NextDouble());
-        int awayGoals = (int)Math.Round(awayProb * maxGoals * rnd.NextDouble());
-
-        List<GolEvent> events = new List<GolEvent>();
-
-      
-        for (int i = 0; i < homeGoals; i++)
+        public class MatchResult
         {
-            events.Add(new GolEvent { Minute = rnd.Next(1, durationMinutes + 1), TeamId = homeTeamId });
-        }
-        for (int i = 0; i < awayGoals; i++)
-        {
-            events.Add(new GolEvent { Minute = rnd.Next(1, durationMinutes + 1), TeamId = awayTeamId });
+            public int HomeScore { get; set; }
+            public int AwayScore { get; set; }
+            public List<GolEvent> GoalEvents { get; set; } = new List<GolEvent>();
+
+            public int HomeCorners { get; set; }
+            public int AwayCorners { get; set; }
         }
 
-       
-        events = events.OrderBy(e => e.Minute).ToList();
-
-        return new MatchResult
+        public class GolEvent
         {
-            HomeScore = homeGoals,
-            AwayScore = awayGoals,
-            GoalEvents = events
-        };
+            public int Minute { get; set; }
+            public int TeamId { get; set; }
+        }
+
+        public static MatchResult SimulateMatch(int homeTeamId, int awayTeamId, int durationMinutes)
+        {
+            Random rnd = new Random();
+
+            // Simular goles
+            int maxGoals = 5;
+            int homeGoals = rnd.Next(0, maxGoals + 1);
+            int awayGoals = rnd.Next(0, maxGoals + 1);
+
+            List<GolEvent> goalEvents = new List<GolEvent>();
+            for (int i = 0; i < homeGoals; i++)
+            {
+                goalEvents.Add(new GolEvent { Minute = rnd.Next(1, durationMinutes + 1), TeamId = homeTeamId });
+            }
+            for (int i = 0; i < awayGoals; i++)
+            {
+                goalEvents.Add(new GolEvent { Minute = rnd.Next(1, durationMinutes + 1), TeamId = awayTeamId });
+            }
+            goalEvents = goalEvents.OrderBy(e => e.Minute).ToList();
+
+          
+            int homeCorners = rnd.Next(2, 11);
+            int awayCorners = rnd.Next(2, 11);
+
+            return new MatchResult
+            {
+                HomeScore = homeGoals,
+                AwayScore = awayGoals,
+                GoalEvents = goalEvents,
+                HomeCorners = homeCorners,
+                AwayCorners = awayCorners
+            };
+        }
     }
 }

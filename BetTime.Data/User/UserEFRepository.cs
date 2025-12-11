@@ -20,22 +20,30 @@ public void AddUser(User user)
     SaveChanges();   
     }
 
+public User GetUserById(int userId)
+{
+    return _context.Users
+        .Include(u => u.Transactions)
+        .Include(u => u.Bets)
+        .FirstOrDefault(u => u.Id == userId);
+}
+
 public IEnumerable<User> GetAllUsers()
-        {
-        var users= _context.Users;
-         return users;     
-        }
+{
+    return _context.Users
+        .Include(u => u.Transactions)
+        .Include(u => u.Bets)
+        .ToList();
+}
         
  public User GetUserByEmail(string UserEmail)
     {
-        var user = _context.Users.FirstOrDefault(user => user.Email == UserEmail);
-        return user;
-    }
-public User GetUserById( int UserId)
-    {
-      var user = _context.Users.FirstOrDefault(user => user.Id == UserId);
-        return user;   
-    } 
+       return _context.Users
+        .Include(u => u.Transactions)
+        .Include(u => u.Bets)
+        .FirstOrDefault(u => u.Email == UserEmail);
+}
+
 public void DeleteUser(User userDelete)
     {
     var user= GetUserById(userDelete.Id);

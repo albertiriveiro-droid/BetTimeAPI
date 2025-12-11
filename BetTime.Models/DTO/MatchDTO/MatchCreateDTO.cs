@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BetTime.Models
-{
+namespace BetTime.Models;
     public class MatchCreateDTO
     {
         [Required]
@@ -17,15 +16,6 @@ namespace BetTime.Models
         public DateTime StartTime { get; set; }
 
         [Required]
-        public decimal HomeOdds { get; set; }
-
-        [Required]
-        public decimal DrawOdds { get; set; }
-
-        [Required]
-        public decimal AwayOdds { get; set; }
-
-       [Required]
         public int DurationMinutes { get; set; } = 90;
+
     }
-}

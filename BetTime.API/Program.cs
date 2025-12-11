@@ -34,6 +34,7 @@ builder.Services.AddScoped<ISportService, SportService>();
 builder.Services.AddScoped<ILeagueService, LeagueService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
+builder.Services.AddScoped<IMarketService, MarketService>();
 builder.Services.AddHostedService<MatchSimulationService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IBetService, BetService>();
