@@ -11,5 +11,4 @@ public class MarketSelectionCreateDTO
 
     public decimal? Threshold { get; set; }
     
-    public MarketType MarketType { get; set; }
 }
