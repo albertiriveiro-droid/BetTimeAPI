@@ -255,12 +255,12 @@ namespace BetTime.Data.Migrations
                 columns: new[] { "Id", "Amount", "Date", "Note", "PaymentMethod", "Type", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 50m, new DateTime(2025, 12, 11, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5411), null, "Tarjeta", "DEPOSIT", 1 },
-                    { 2, 25m, new DateTime(2025, 12, 12, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5417), null, "PayPal", "DEPOSIT", 1 },
-                    { 3, 100m, new DateTime(2025, 12, 10, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5418), null, "Tarjeta", "DEPOSIT", 2 },
-                    { 4, 50m, new DateTime(2025, 12, 12, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5419), null, "PayPal", "WITHDRAW", 2 },
-                    { 5, 75m, new DateTime(2025, 12, 11, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5420), null, "Tarjeta", "DEPOSIT", 3 },
-                    { 6, 30m, new DateTime(2025, 12, 12, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5421), null, "PayPal", "WITHDRAW", 3 }
+                    { 1, 50m, new DateTime(2025, 12, 11, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2598), null, "Tarjeta", "DEPOSIT", 1 },
+                    { 2, 25m, new DateTime(2025, 12, 12, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2603), null, "PayPal", "DEPOSIT", 1 },
+                    { 3, 100m, new DateTime(2025, 12, 10, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2605), null, "Tarjeta", "DEPOSIT", 2 },
+                    { 4, 50m, new DateTime(2025, 12, 12, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2607), null, "PayPal", "WITHDRAW", 2 },
+                    { 5, 75m, new DateTime(2025, 12, 11, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2608), null, "Tarjeta", "DEPOSIT", 3 },
+                    { 6, 30m, new DateTime(2025, 12, 12, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2610), null, "PayPal", "WITHDRAW", 3 }
                 });
 
             migrationBuilder.InsertData(

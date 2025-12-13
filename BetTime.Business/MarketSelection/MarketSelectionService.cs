@@ -16,7 +16,7 @@ public class MarketSelectionService : IMarketSelectionService
         _selectionRepository = selectionRepository;
     }
 
-    public MarketSelection CreateSelection(int marketId, MarketSelectionCreateDTO dto)
+ public MarketSelection CreateSelection(int marketId, MarketSelectionCreateDTO dto)
 {
     var market = _marketRepository.GetMarketById(marketId)
         ?? throw new KeyNotFoundException("Market not found");
@@ -24,27 +24,32 @@ public class MarketSelectionService : IMarketSelectionService
     if (market.Match!.Finished)
         throw new InvalidOperationException("Cannot add selections to finished match");
 
-   
-    switch (dto.MarketType)
+
+    switch (market.MarketType)
     {
         case MarketType.OneXTwo:
             if (!Enum.IsDefined(typeof(OneXTwoSelection), dto.Name))
                 throw new InvalidOperationException("Invalid selection for 1X2 market");
             break;
+
         case MarketType.OverUnderGoals:
             if (!Enum.IsDefined(typeof(OverUnderSelection), dto.Name))
                 throw new InvalidOperationException("Invalid selection for Over/Under market");
             break;
+
         case MarketType.TotalCorners:
             if (!Enum.IsDefined(typeof(TotalCornersSelection), dto.Name))
                 throw new InvalidOperationException("Invalid selection for Total Corners market");
             break;
+
+        default:
+            throw new NotImplementedException("Market type not supported");
     }
 
     var selection = new MarketSelection
     {
         MarketId = marketId,
-        Name = dto.Name,  
+        Name = dto.Name,
         Odd = dto.Odd,
         Threshold = dto.Threshold
     };
