@@ -14,7 +14,7 @@ public class Market
     public Match? Match { get; set; }
 
     [Required]
-    public string MarketType { get; set; } = ""; 
+    public MarketType MarketType { get; set; }  
     
 
     public string? Description { get; set; }
@@ -23,7 +23,7 @@ public class Market
 
     public Market() {}
 
-    public Market(int matchId, string marketType, string? description = null)
+    public Market(int matchId, MarketType marketType, string? description = null)
     {
         MatchId = matchId;
         MarketType = marketType;

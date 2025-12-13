@@ -35,6 +35,7 @@ builder.Services.AddScoped<ILeagueService, LeagueService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IMarketService, MarketService>();
+builder.Services.AddScoped<IMarketSelectionService, MarketSelectionService>();
 builder.Services.AddHostedService<MatchSimulationService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IBetService, BetService>();
@@ -43,6 +44,8 @@ builder.Services.AddScoped<ISportRepository, SportEFRepository>();
 builder.Services.AddScoped<ILeagueRepository, LeagueEFRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamEFRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchEFRepository>();
+builder.Services.AddScoped<IMarketRepository, MarketEFRepository>();
+builder.Services.AddScoped<IMarketSelectionRepository, MarketSelectionEFRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionEFRepository>();
 builder.Services.AddScoped<IBetRepository, BetEFRepository>();
 
@@ -66,8 +69,11 @@ builder.Services.AddCors(options =>
 });
 
 
-builder.Services.AddControllers();
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddHttpClient();
 
 
@@ -77,7 +83,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "BetTime API", Version = "v1" });
 
-    // Configure the security scheme for JWT
+
+
+    
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme",

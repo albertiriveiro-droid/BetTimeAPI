@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BetTime.Data.Migrations
 {
     [DbContext(typeof(BetTimeContext))]
-    [Migration("20251211204708_InitialCreate")]
+    [Migration("20251213181603_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,9 +114,8 @@ namespace BetTime.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MarketType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("MarketType")
+                        .HasColumnType("int");
 
                     b.Property<int>("MatchId")
                         .HasColumnType("int");
@@ -132,42 +131,42 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 1,
                             Description = "Resultado final",
-                            MarketType = "Resultado 1X2",
+                            MarketType = 0,
                             MatchId = 1
                         },
                         new
                         {
                             Id = 2,
                             Description = "Más/Menos de 2.5 goles",
-                            MarketType = "Goles Totales",
+                            MarketType = 1,
                             MatchId = 1
                         },
                         new
                         {
                             Id = 3,
                             Description = "Resultado final",
-                            MarketType = "Resultado 1X2",
+                            MarketType = 0,
                             MatchId = 2
                         },
                         new
                         {
                             Id = 4,
                             Description = "Más/Menos de 2.5 goles",
-                            MarketType = "Goles Totales",
+                            MarketType = 1,
                             MatchId = 2
                         },
                         new
                         {
                             Id = 5,
                             Description = "Resultado final",
-                            MarketType = "Resultado 1X2",
+                            MarketType = 0,
                             MatchId = 3
                         },
                         new
                         {
                             Id = 6,
                             Description = "Más/Menos de 2.5 goles",
-                            MarketType = "Goles Totales",
+                            MarketType = 1,
                             MatchId = 3
                         });
                 });
@@ -594,7 +593,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 1,
                             Amount = 50m,
-                            Date = new DateTime(2025, 12, 9, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5585),
+                            Date = new DateTime(2025, 12, 11, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5411),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -603,7 +602,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 2,
                             Amount = 25m,
-                            Date = new DateTime(2025, 12, 10, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5590),
+                            Date = new DateTime(2025, 12, 12, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5417),
                             PaymentMethod = "PayPal",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -612,7 +611,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 3,
                             Amount = 100m,
-                            Date = new DateTime(2025, 12, 8, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5591),
+                            Date = new DateTime(2025, 12, 10, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5418),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 2
@@ -621,7 +620,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 4,
                             Amount = 50m,
-                            Date = new DateTime(2025, 12, 10, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5592),
+                            Date = new DateTime(2025, 12, 12, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5419),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 2
@@ -630,7 +629,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 5,
                             Amount = 75m,
-                            Date = new DateTime(2025, 12, 9, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5593),
+                            Date = new DateTime(2025, 12, 11, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5420),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 3
@@ -639,7 +638,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 6,
                             Amount = 30m,
-                            Date = new DateTime(2025, 12, 10, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5594),
+                            Date = new DateTime(2025, 12, 12, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5421),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 3

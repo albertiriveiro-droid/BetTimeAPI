@@ -5,89 +5,40 @@ namespace BetTime.Business;
 
 public class MarketService : IMarketService
 {
+    private readonly IMarketRepository _marketRepository;
     private readonly IMatchRepository _matchRepository;
-  
 
-    public MarketService(IMatchRepository matchRepository)
+    public MarketService(
+        IMarketRepository marketRepository,
+        IMatchRepository matchRepository)
     {
+        _marketRepository = marketRepository;
         _matchRepository = matchRepository;
-        
     }
 
-    public Market CreateMarket(int matchId, MarketCreateDTO marketDTO)
+    public Market CreateMarket(int matchId, MarketCreateDTO dto)
     {
         var match = _matchRepository.GetMatchById(matchId)
-            ?? throw new KeyNotFoundException($"Match with ID {matchId} not found");
+            ?? throw new KeyNotFoundException("Match not found");
 
-        var market = new Market(match.Id, marketDTO.MarketType, marketDTO.Description);
+        if (match.Finished)
+            throw new InvalidOperationException("Cannot create markets for finished match");
 
-        foreach (var selDTO in marketDTO.Selections)
-        {
-            var selection = new MarketSelection
-            {
-                Name = selDTO.Name,
-                Odd = selDTO.Odd
-            };
-            market.Selections.Add(selection);
-        }
+        if (match.StartTime <= DateTime.UtcNow)
+            throw new InvalidOperationException("Cannot create markets after match start");
 
-        match.Markets.Add(market);
-        _matchRepository.UpdateMatch(match);
+        var market = new Market(matchId, dto.MarketType, dto.Description);
 
-        return market;
+        return _marketRepository.AddMarket(market);
     }
+
+    
 
     public IEnumerable<Market> GetMarketsByMatch(int matchId)
-    {
-        var match = _matchRepository.GetMatchById(matchId)
-            ?? throw new KeyNotFoundException($"Match with ID {matchId} not found");
-
-        return match.Markets;
-    }
+        => _marketRepository.GetMarketByMatch(matchId);
 
     public Market GetMarketById(int marketId)
-    {
-        var allMarkets = _matchRepository.GetAllMatches()
-            .SelectMany(m => m.Markets)
-            .ToList();
-
-        var market = allMarkets.FirstOrDefault(m => m.Id == marketId)
-            ?? throw new KeyNotFoundException($"Market with ID {marketId} not found");
-
-        return market;
-    }
-
-    public MarketSelection AddSelection(int marketId, MarketSelectionCreateDTO selectionDTO)
-    {
-        var market = GetMarketById(marketId);
-
-        var selection = new MarketSelection
-        {
-            Name = selectionDTO.Name,
-            Odd = selectionDTO.Odd
-        };
-
-        market.Selections.Add(selection);
-        _matchRepository.UpdateMatch(market.Match!);
-        return selection;
-    }
-
-    public MarketSelection UpdateSelection(int selectionId, decimal newOdd, string? newName = null)
-    {
-        var allMarkets = _matchRepository.GetAllMatches()
-            .SelectMany(m => m.Markets)
-            .ToList();
-
-        var selection = allMarkets
-            .SelectMany(m => m.Selections)
-            .FirstOrDefault(s => s.Id == selectionId)
-            ?? throw new KeyNotFoundException($"Selection with ID {selectionId} not found");
-
-        selection.Odd = newOdd;
-        if (!string.IsNullOrEmpty(newName))
-            selection.Name = newName;
-
-        _matchRepository.UpdateMatch(selection.Market!.Match!);
-        return selection;
-    }
+        => _marketRepository.GetMarketById(marketId)
+            ?? throw new KeyNotFoundException("Market not found");
+    
 }

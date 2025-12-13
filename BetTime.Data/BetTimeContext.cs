@@ -153,20 +153,19 @@ modelBuilder.Entity<Market>()
                 new Transaction { Id = 6, UserId = 3, Amount = 30, Date = DateTime.UtcNow.AddDays(-1), PaymentMethod = "PayPal", Type = "WITHDRAW" }
             );
 
-            // Mercados
-            modelBuilder.Entity<Market>().HasData(
-                new Market { Id = 1, MatchId = 1, MarketType = "Resultado 1X2", Description = "Resultado final" },
-                new Market { Id = 2, MatchId = 1, MarketType = "Goles Totales", Description = "Más/Menos de 2.5 goles" },
+          modelBuilder.Entity<Market>().HasData(
+         new Market { Id = 1, MatchId = 1, MarketType = MarketType.OneXTwo, Description = "Resultado final" },
+        new Market { Id = 2, MatchId = 1, MarketType = MarketType.OverUnderGoals, Description = "Más/Menos de 2.5 goles" },
 
-                new Market { Id = 3, MatchId = 2, MarketType = "Resultado 1X2", Description = "Resultado final" },
-                new Market { Id = 4, MatchId = 2, MarketType = "Goles Totales", Description = "Más/Menos de 2.5 goles" },
+        new Market { Id = 3, MatchId = 2, MarketType = MarketType.OneXTwo, Description = "Resultado final" },
+        new Market { Id = 4, MatchId = 2, MarketType = MarketType.OverUnderGoals, Description = "Más/Menos de 2.5 goles" },
 
-                new Market { Id = 5, MatchId = 3, MarketType = "Resultado 1X2", Description = "Resultado final" },
-                new Market { Id = 6, MatchId = 3, MarketType = "Goles Totales", Description = "Más/Menos de 2.5 goles" }
-            );
+        new Market { Id = 5, MatchId = 3, MarketType = MarketType.OneXTwo, Description = "Resultado final" },
+        new Market { Id = 6, MatchId = 3, MarketType = MarketType.OverUnderGoals, Description = "Más/Menos de 2.5 goles" }
+);
 
-            // Selecciones de mercados
-            modelBuilder.Entity<MarketSelection>().HasData(
+            
+        modelBuilder.Entity<MarketSelection>().HasData(
                 new MarketSelection { Id = 1, MarketId = 1, Name = "Real Madrid gana", Odd = 1.8m },
                 new MarketSelection { Id = 2, MarketId = 1, Name = "Empate", Odd = 3.2m },
                 new MarketSelection { Id = 3, MarketId = 1, Name = "Barcelona gana", Odd = 4.0m },

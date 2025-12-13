@@ -154,7 +154,7 @@ namespace BetTime.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MatchId = table.Column<int>(type: "int", nullable: false),
-                    MarketType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MarketType = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -255,12 +255,12 @@ namespace BetTime.Data.Migrations
                 columns: new[] { "Id", "Amount", "Date", "Note", "PaymentMethod", "Type", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 50m, new DateTime(2025, 12, 9, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5585), null, "Tarjeta", "DEPOSIT", 1 },
-                    { 2, 25m, new DateTime(2025, 12, 10, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5590), null, "PayPal", "DEPOSIT", 1 },
-                    { 3, 100m, new DateTime(2025, 12, 8, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5591), null, "Tarjeta", "DEPOSIT", 2 },
-                    { 4, 50m, new DateTime(2025, 12, 10, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5592), null, "PayPal", "WITHDRAW", 2 },
-                    { 5, 75m, new DateTime(2025, 12, 9, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5593), null, "Tarjeta", "DEPOSIT", 3 },
-                    { 6, 30m, new DateTime(2025, 12, 10, 20, 47, 8, 477, DateTimeKind.Utc).AddTicks(5594), null, "PayPal", "WITHDRAW", 3 }
+                    { 1, 50m, new DateTime(2025, 12, 11, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5411), null, "Tarjeta", "DEPOSIT", 1 },
+                    { 2, 25m, new DateTime(2025, 12, 12, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5417), null, "PayPal", "DEPOSIT", 1 },
+                    { 3, 100m, new DateTime(2025, 12, 10, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5418), null, "Tarjeta", "DEPOSIT", 2 },
+                    { 4, 50m, new DateTime(2025, 12, 12, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5419), null, "PayPal", "WITHDRAW", 2 },
+                    { 5, 75m, new DateTime(2025, 12, 11, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5420), null, "Tarjeta", "DEPOSIT", 3 },
+                    { 6, 30m, new DateTime(2025, 12, 12, 18, 16, 2, 803, DateTimeKind.Utc).AddTicks(5421), null, "PayPal", "WITHDRAW", 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -305,12 +305,12 @@ namespace BetTime.Data.Migrations
                 columns: new[] { "Id", "Description", "MarketType", "MatchId" },
                 values: new object[,]
                 {
-                    { 1, "Resultado final", "Resultado 1X2", 1 },
-                    { 2, "Más/Menos de 2.5 goles", "Goles Totales", 1 },
-                    { 3, "Resultado final", "Resultado 1X2", 2 },
-                    { 4, "Más/Menos de 2.5 goles", "Goles Totales", 2 },
-                    { 5, "Resultado final", "Resultado 1X2", 3 },
-                    { 6, "Más/Menos de 2.5 goles", "Goles Totales", 3 }
+                    { 1, "Resultado final", 0, 1 },
+                    { 2, "Más/Menos de 2.5 goles", 1, 1 },
+                    { 3, "Resultado final", 0, 2 },
+                    { 4, "Más/Menos de 2.5 goles", 1, 2 },
+                    { 5, "Resultado final", 0, 3 },
+                    { 6, "Más/Menos de 2.5 goles", 1, 3 }
                 });
 
             migrationBuilder.InsertData(
