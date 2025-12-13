@@ -4,7 +4,6 @@ using BetTime.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace BetTime.Business
 {
     public class MatchSimulationService : BackgroundService
@@ -42,13 +41,10 @@ namespace BetTime.Business
                         match.HomeCorners = result.HomeCorners;
                         match.AwayCorners = result.AwayCorners;
 
-                      
-
                         match.Finished = true;
 
                         matchRepository.UpdateMatch(match);
 
-                      
                         betService.ResolveBetsForMatch(match.Id);
                     }
                 }

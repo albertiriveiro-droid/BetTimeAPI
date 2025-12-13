@@ -8,4 +8,8 @@ public class MarketSelectionCreateDTO
 
     [Required]
     public decimal Odd { get; set; }  
+
+    public decimal? Threshold { get; set; }
+    
+    public MarketType MarketType { get; set; }
 }
