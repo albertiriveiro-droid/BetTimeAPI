@@ -19,16 +19,20 @@ public class MatchEFRepository : IMatchRepository
     }
 
     public IEnumerable<Match> GetAllMatches()
-{
-    return _context.Matches
-        .Include(m => m.League)
-        .Include(m => m.HomeTeam)
-        .Include(m => m.AwayTeam)
-        .Include(m => m.Markets)
-            .ThenInclude(mk => mk.Selections)
-        .Include(m => m.Bets)  
-        .ToList();
-}
+    {
+        return _context.Matches
+            .Include(m => m.League)
+            .Include(m => m.HomeTeam)
+            .Include(m => m.AwayTeam)
+            .Include(m => m.Markets)
+                .ThenInclude(mk => mk.Selections)
+            .Include(m => m.PlayerMarkets)
+                .ThenInclude(pm => pm.Selections)
+            .Include(m => m.Bets)
+             .Include(m => m.PlayerMatchStats) 
+            .ToList();
+    }
+
     public Match? GetMatchById(int matchId)
     {
         return _context.Matches
@@ -37,6 +41,10 @@ public class MatchEFRepository : IMatchRepository
             .Include(m => m.AwayTeam)
             .Include(m => m.Markets)
                 .ThenInclude(mk => mk.Selections)
+            .Include(m => m.PlayerMarkets)
+                .ThenInclude(pm => pm.Selections)
+            .Include(m => m.Bets)
+             .Include(m => m.PlayerMatchStats) 
             .FirstOrDefault(m => m.Id == matchId);
     }
 
@@ -49,6 +57,10 @@ public class MatchEFRepository : IMatchRepository
             .Include(m => m.AwayTeam)
             .Include(m => m.Markets)
                 .ThenInclude(mk => mk.Selections)
+            .Include(m => m.PlayerMarkets)
+                .ThenInclude(pm => pm.Selections)
+            .Include(m => m.Bets)
+             .Include(m => m.PlayerMatchStats) 
             .ToList();
     }
 
@@ -60,7 +72,11 @@ public class MatchEFRepository : IMatchRepository
             .Include(m => m.HomeTeam)
             .Include(m => m.AwayTeam)
             .Include(m => m.Markets)
-            .ThenInclude(mk => mk.Selections)
+                .ThenInclude(mk => mk.Selections)
+            .Include(m => m.PlayerMarkets)
+                .ThenInclude(pm => pm.Selections)
+            .Include(m => m.Bets)
+             .Include(m => m.PlayerMatchStats) 
             .ToList();
     }
 
@@ -72,7 +88,11 @@ public class MatchEFRepository : IMatchRepository
             .Include(m => m.HomeTeam)
             .Include(m => m.AwayTeam)
             .Include(m => m.Markets)
-            .ThenInclude(mk => mk.Selections)
+                .ThenInclude(mk => mk.Selections)
+            .Include(m => m.PlayerMarkets)
+                .ThenInclude(pm => pm.Selections)
+            .Include(m => m.Bets)
+             .Include(m => m.PlayerMatchStats) 
             .ToList();
     }
 
@@ -85,6 +105,10 @@ public class MatchEFRepository : IMatchRepository
             .Include(m => m.AwayTeam)
             .Include(m => m.Markets)
                 .ThenInclude(mk => mk.Selections)
+            .Include(m => m.PlayerMarkets)
+                .ThenInclude(pm => pm.Selections)
+            .Include(m => m.Bets)
+             .Include(m => m.PlayerMatchStats) 
             .ToList();
     }
 
@@ -94,6 +118,10 @@ public class MatchEFRepository : IMatchRepository
             .Where(m => !m.Finished && m.StartTime <= currentTime)
             .Include(m => m.Markets)
                 .ThenInclude(mk => mk.Selections)
+            .Include(m => m.PlayerMarkets)
+                .ThenInclude(pm => pm.Selections)
+            .Include(m => m.Bets)
+             .Include(m => m.PlayerMatchStats) 
             .ToList();
     }
 

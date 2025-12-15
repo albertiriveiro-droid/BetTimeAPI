@@ -1,10 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Dynamic;
 using System.Text.Json.Serialization;
 
 namespace BetTime.Models;
-
 
 public class Match
 {
@@ -35,27 +33,28 @@ public class Match
     [Required]
     public DateTime StartTime { get; set; }
 
-
-   
     public int HomeScore { get; set; } = 0;
-
-    public int HomeCorners {get; set;} = 0;
-    public int AwayCorners {get; set;}= 0;
     public int AwayScore { get; set; } = 0;
+    public int HomeCorners { get; set; } = 0;
+    public int AwayCorners { get; set; } = 0;
+
     [Required]
     public int DurationMinutes { get; set; } = 90;
-   
-    public double HomeWinProbability { get; set; }
-    public double DrawProbability { get; set; }
-    public double AwayWinProbability { get; set; }
+
+  
+    public ICollection<PlayerMatchStats> PlayerMatchStats { get; set; } = new List<PlayerMatchStats>();
+
+    public string? PlayerMatchStatsJson { get; set; }
+
 
     [Required]
     public bool Finished { get; set; }
 
     public ICollection<Bet> Bets { get; set; } = new List<Bet>();
     public ICollection<Market> Markets { get; set; } = new List<Market>();
+    public ICollection<PlayerMarket> PlayerMarkets { get; set; } = new List<PlayerMarket>();
 
-    public Match() {}
+    public Match() { }
 
     public Match(int leagueId, int homeTeamId, int awayTeamId, DateTime startTime, int durationMinutes)
     {
@@ -63,10 +62,7 @@ public class Match
         HomeTeamId = homeTeamId;
         AwayTeamId = awayTeamId;
         StartTime = startTime;
-        
-        DurationMinutes=durationMinutes;
+        DurationMinutes = durationMinutes;
         Finished = false;
-        Bets = new List<Bet>();
-        Markets= new List<Market>();
     }
 }

@@ -115,13 +115,11 @@ namespace BetTime.Data.Migrations
                     AwayTeamId = table.Column<int>(type: "int", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     HomeScore = table.Column<int>(type: "int", nullable: false),
+                    AwayScore = table.Column<int>(type: "int", nullable: false),
                     HomeCorners = table.Column<int>(type: "int", nullable: false),
                     AwayCorners = table.Column<int>(type: "int", nullable: false),
-                    AwayScore = table.Column<int>(type: "int", nullable: false),
                     DurationMinutes = table.Column<int>(type: "int", nullable: false),
-                    HomeWinProbability = table.Column<double>(type: "float", nullable: false),
-                    DrawProbability = table.Column<double>(type: "float", nullable: false),
-                    AwayWinProbability = table.Column<double>(type: "float", nullable: false),
+                    PlayerMatchStatsJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Finished = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -148,6 +146,32 @@ namespace BetTime.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Players",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Position = table.Column<int>(type: "int", nullable: false),
+                    TeamId = table.Column<int>(type: "int", nullable: false),
+                    ShirtNumber = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    TempGoals = table.Column<int>(type: "int", nullable: false),
+                    TempAssists = table.Column<int>(type: "int", nullable: false),
+                    TempMinutesPlayed = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Players", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Players_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Markets",
                 columns: table => new
                 {
@@ -166,6 +190,71 @@ namespace BetTime.Data.Migrations
                         principalTable: "Matches",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlayerMarkets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MatchId = table.Column<int>(type: "int", nullable: false),
+                    PlayerId = table.Column<int>(type: "int", nullable: false),
+                    PlayerMarketType = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsOpen = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlayerMarkets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlayerMarkets_Matches_MatchId",
+                        column: x => x.MatchId,
+                        principalTable: "Matches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PlayerMarkets_Players_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlayerMatchStats",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PlayerId = table.Column<int>(type: "int", nullable: false),
+                    MatchId = table.Column<int>(type: "int", nullable: false),
+                    MatchId1 = table.Column<int>(type: "int", nullable: true),
+                    Goals = table.Column<int>(type: "int", nullable: false),
+                    Assists = table.Column<int>(type: "int", nullable: false),
+                    Shots = table.Column<int>(type: "int", nullable: false),
+                    MinutesPlayed = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlayerMatchStats", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlayerMatchStats_Matches_MatchId",
+                        column: x => x.MatchId,
+                        principalTable: "Matches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlayerMatchStats_Matches_MatchId1",
+                        column: x => x.MatchId1,
+                        principalTable: "Matches",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PlayerMatchStats_Players_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,6 +280,28 @@ namespace BetTime.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PlayerMarketSelections",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PlayerMarketId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Odd = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Threshold = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlayerMarketSelections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlayerMarketSelections_PlayerMarkets_PlayerMarketId",
+                        column: x => x.PlayerMarketId,
+                        principalTable: "PlayerMarkets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Bets",
                 columns: table => new
                 {
@@ -198,7 +309,8 @@ namespace BetTime.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     MatchId = table.Column<int>(type: "int", nullable: false),
-                    MarketSelectionId = table.Column<int>(type: "int", nullable: false),
+                    MarketSelectionId = table.Column<int>(type: "int", nullable: true),
+                    PlayerMarketSelectionId = table.Column<int>(type: "int", nullable: true),
                     Amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Won = table.Column<bool>(type: "bit", nullable: true),
                     PlacedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -210,13 +322,18 @@ namespace BetTime.Data.Migrations
                         name: "FK_Bets_MarketSelections_MarketSelectionId",
                         column: x => x.MarketSelectionId,
                         principalTable: "MarketSelections",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Bets_Matches_MatchId",
                         column: x => x.MatchId,
                         principalTable: "Matches",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Bets_PlayerMarketSelections_PlayerMarketSelectionId",
+                        column: x => x.PlayerMarketSelectionId,
+                        principalTable: "PlayerMarketSelections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Bets_Users_UserId",
                         column: x => x.UserId,
@@ -255,12 +372,12 @@ namespace BetTime.Data.Migrations
                 columns: new[] { "Id", "Amount", "Date", "Note", "PaymentMethod", "Type", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 50m, new DateTime(2025, 12, 11, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2598), null, "Tarjeta", "DEPOSIT", 1 },
-                    { 2, 25m, new DateTime(2025, 12, 12, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2603), null, "PayPal", "DEPOSIT", 1 },
-                    { 3, 100m, new DateTime(2025, 12, 10, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2605), null, "Tarjeta", "DEPOSIT", 2 },
-                    { 4, 50m, new DateTime(2025, 12, 12, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2607), null, "PayPal", "WITHDRAW", 2 },
-                    { 5, 75m, new DateTime(2025, 12, 11, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2608), null, "Tarjeta", "DEPOSIT", 3 },
-                    { 6, 30m, new DateTime(2025, 12, 12, 21, 44, 23, 11, DateTimeKind.Utc).AddTicks(2610), null, "PayPal", "WITHDRAW", 3 }
+                    { 1, 50m, new DateTime(2025, 12, 13, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5962), null, "Tarjeta", "DEPOSIT", 1 },
+                    { 2, 25m, new DateTime(2025, 12, 14, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5967), null, "PayPal", "DEPOSIT", 1 },
+                    { 3, 100m, new DateTime(2025, 12, 12, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5969), null, "Tarjeta", "DEPOSIT", 2 },
+                    { 4, 50m, new DateTime(2025, 12, 14, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5970), null, "PayPal", "WITHDRAW", 2 },
+                    { 5, 75m, new DateTime(2025, 12, 13, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5971), null, "Tarjeta", "DEPOSIT", 3 },
+                    { 6, 30m, new DateTime(2025, 12, 14, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5973), null, "PayPal", "WITHDRAW", 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -287,18 +404,82 @@ namespace BetTime.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "Matches",
-                columns: new[] { "Id", "AwayCorners", "AwayScore", "AwayTeamId", "AwayWinProbability", "DrawProbability", "DurationMinutes", "Finished", "HomeCorners", "HomeScore", "HomeTeamId", "HomeWinProbability", "LeagueId", "StartTime" },
-                values: new object[] { 1, 0, 0, 2, 0.0, 0.0, 90, false, 0, 0, 1, 0.0, 1, new DateTime(2025, 12, 11, 21, 0, 0, 0, DateTimeKind.Unspecified) });
+                columns: new[] { "Id", "AwayCorners", "AwayScore", "AwayTeamId", "DurationMinutes", "Finished", "HomeCorners", "HomeScore", "HomeTeamId", "LeagueId", "PlayerMatchStatsJson", "StartTime" },
+                values: new object[,]
+                {
+                    { 1, 0, 0, 2, 90, false, 0, 0, 1, 1, null, new DateTime(2025, 12, 11, 21, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 0, 0, 7, 90, false, 0, 0, 6, 2, null, new DateTime(2025, 12, 11, 21, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 0, 0, 12, 90, false, 0, 0, 11, 3, null, new DateTime(2025, 12, 11, 21, 0, 0, 0, DateTimeKind.Unspecified) }
+                });
 
             migrationBuilder.InsertData(
-                table: "Matches",
-                columns: new[] { "Id", "AwayCorners", "AwayScore", "AwayTeamId", "AwayWinProbability", "DrawProbability", "DurationMinutes", "Finished", "HomeCorners", "HomeScore", "HomeTeamId", "HomeWinProbability", "LeagueId", "StartTime" },
-                values: new object[] { 2, 0, 0, 7, 0.0, 0.0, 90, false, 0, 0, 6, 0.0, 2, new DateTime(2025, 12, 11, 21, 0, 0, 0, DateTimeKind.Unspecified) });
+                table: "Players",
+                columns: new[] { "Id", "IsActive", "Name", "Position", "ShirtNumber", "TeamId", "TempAssists", "TempGoals", "TempMinutesPlayed" },
+                values: new object[,]
+                {
+                    { 1, true, "Courtois", 0, 0, 1, 0, 0, 0 },
+                    { 2, true, "Carvajal", 0, 0, 1, 0, 0, 0 },
+                    { 3, true, "Militao", 0, 0, 1, 0, 0, 0 },
+                    { 4, true, "Alaba", 0, 0, 1, 0, 0, 0 },
+                    { 5, true, "Mendy", 0, 0, 1, 0, 0, 0 },
+                    { 6, true, "Modric", 0, 0, 1, 0, 0, 0 },
+                    { 7, true, "Casemiro", 0, 0, 1, 0, 0, 0 },
+                    { 8, true, "Kroos", 0, 0, 1, 0, 0, 0 },
+                    { 9, true, "Vinicius", 0, 0, 1, 0, 0, 0 },
+                    { 10, true, "Benzema", 0, 0, 1, 0, 0, 0 },
+                    { 11, true, "Rodrygo", 0, 0, 1, 0, 0, 0 },
+                    { 12, true, "Ter Stegen", 0, 0, 2, 0, 0, 0 },
+                    { 13, true, "Dest", 0, 0, 2, 0, 0, 0 },
+                    { 14, true, "Piqué", 0, 0, 2, 0, 0, 0 },
+                    { 15, true, "Araujo", 0, 0, 2, 0, 0, 0 },
+                    { 16, true, "Alba", 0, 0, 2, 0, 0, 0 },
+                    { 17, true, "Busquets", 0, 0, 2, 0, 0, 0 },
+                    { 18, true, "Pedri", 0, 0, 2, 0, 0, 0 },
+                    { 19, true, "Gavi", 0, 0, 2, 0, 0, 0 },
+                    { 20, true, "Lewandowski", 0, 0, 2, 0, 0, 0 },
+                    { 21, true, "Ferran Torres", 0, 0, 2, 0, 0, 0 },
+                    { 22, true, "Raphinha", 0, 0, 2, 0, 0, 0 },
+                    { 23, true, "Oblak", 0, 0, 3, 0, 0, 0 },
+                    { 24, true, "Trippier", 0, 0, 3, 0, 0, 0 },
+                    { 25, true, "Giménez", 0, 0, 3, 0, 0, 0 },
+                    { 26, true, "Savic", 0, 0, 3, 0, 0, 0 },
+                    { 27, true, "Reinildo", 0, 0, 3, 0, 0, 0 },
+                    { 28, true, "Koke", 0, 0, 3, 0, 0, 0 },
+                    { 29, true, "De Paul", 0, 0, 3, 0, 0, 0 },
+                    { 30, true, "Saul", 0, 0, 3, 0, 0, 0 },
+                    { 31, true, "Griezmann", 0, 0, 3, 0, 0, 0 },
+                    { 32, true, "Correa", 0, 0, 3, 0, 0, 0 },
+                    { 33, true, "Felix", 0, 0, 3, 0, 0, 0 },
+                    { 34, true, "Bono", 0, 0, 4, 0, 0, 0 },
+                    { 35, true, "Navas", 0, 0, 4, 0, 0, 0 },
+                    { 36, true, "Koundé", 0, 0, 4, 0, 0, 0 },
+                    { 37, true, "Diego Carlos", 0, 0, 4, 0, 0, 0 },
+                    { 38, true, "Acuna", 0, 0, 4, 0, 0, 0 },
+                    { 39, true, "Fernando", 0, 0, 4, 0, 0, 0 }
+                });
 
             migrationBuilder.InsertData(
-                table: "Matches",
-                columns: new[] { "Id", "AwayCorners", "AwayScore", "AwayTeamId", "AwayWinProbability", "DrawProbability", "DurationMinutes", "Finished", "HomeCorners", "HomeScore", "HomeTeamId", "HomeWinProbability", "LeagueId", "StartTime" },
-                values: new object[] { 3, 0, 0, 12, 0.0, 0.0, 90, false, 0, 0, 11, 0.0, 3, new DateTime(2025, 12, 11, 21, 0, 0, 0, DateTimeKind.Unspecified) });
+                table: "Players",
+                columns: new[] { "Id", "IsActive", "Name", "Position", "ShirtNumber", "TeamId", "TempAssists", "TempGoals", "TempMinutesPlayed" },
+                values: new object[,]
+                {
+                    { 40, true, "Rakitic", 0, 0, 4, 0, 0, 0 },
+                    { 41, true, "Joan Jordán", 0, 0, 4, 0, 0, 0 },
+                    { 42, true, "En-Nesyri", 0, 0, 4, 0, 0, 0 },
+                    { 43, true, "Ocampos", 0, 0, 4, 0, 0, 0 },
+                    { 44, true, "Martínez", 0, 0, 4, 0, 0, 0 },
+                    { 45, true, "Cillessen", 0, 0, 5, 0, 0, 0 },
+                    { 46, true, "Gaya", 0, 0, 5, 0, 0, 0 },
+                    { 47, true, "Alderete", 0, 0, 5, 0, 0, 0 },
+                    { 48, true, "Diakhaby", 0, 0, 5, 0, 0, 0 },
+                    { 49, true, "Foulquier", 0, 0, 5, 0, 0, 0 },
+                    { 50, true, "Soler", 0, 0, 5, 0, 0, 0 },
+                    { 51, true, "Cáceres", 0, 0, 5, 0, 0, 0 },
+                    { 52, true, "Guedes", 0, 0, 5, 0, 0, 0 },
+                    { 53, true, "D. Almeida", 0, 0, 5, 0, 0, 0 },
+                    { 54, true, "Moreno", 0, 0, 5, 0, 0, 0 },
+                    { 55, true, "Cheryshev", 0, 0, 5, 0, 0, 0 }
+                });
 
             migrationBuilder.InsertData(
                 table: "Markets",
@@ -346,6 +527,11 @@ namespace BetTime.Data.Migrations
                 column: "MatchId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bets_PlayerMarketSelectionId",
+                table: "Bets",
+                column: "PlayerMarketSelectionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Bets_UserId",
                 table: "Bets",
                 column: "UserId");
@@ -381,6 +567,41 @@ namespace BetTime.Data.Migrations
                 column: "LeagueId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlayerMarkets_MatchId",
+                table: "PlayerMarkets",
+                column: "MatchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerMarkets_PlayerId",
+                table: "PlayerMarkets",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerMarketSelections_PlayerMarketId",
+                table: "PlayerMarketSelections",
+                column: "PlayerMarketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerMatchStats_MatchId",
+                table: "PlayerMatchStats",
+                column: "MatchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerMatchStats_MatchId1",
+                table: "PlayerMatchStats",
+                column: "MatchId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerMatchStats_PlayerId",
+                table: "PlayerMatchStats",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Players_TeamId",
+                table: "Players",
+                column: "TeamId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Teams_LeagueId",
                 table: "Teams",
                 column: "LeagueId");
@@ -397,10 +618,16 @@ namespace BetTime.Data.Migrations
                 name: "Bets");
 
             migrationBuilder.DropTable(
+                name: "PlayerMatchStats");
+
+            migrationBuilder.DropTable(
                 name: "Transactions");
 
             migrationBuilder.DropTable(
                 name: "MarketSelections");
+
+            migrationBuilder.DropTable(
+                name: "PlayerMarketSelections");
 
             migrationBuilder.DropTable(
                 name: "Users");
@@ -409,7 +636,13 @@ namespace BetTime.Data.Migrations
                 name: "Markets");
 
             migrationBuilder.DropTable(
+                name: "PlayerMarkets");
+
+            migrationBuilder.DropTable(
                 name: "Matches");
+
+            migrationBuilder.DropTable(
+                name: "Players");
 
             migrationBuilder.DropTable(
                 name: "Teams");

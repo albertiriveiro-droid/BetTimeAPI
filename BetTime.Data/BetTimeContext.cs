@@ -18,12 +18,16 @@ namespace BetTime.Data
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Bet> Bets { get; set; }
         public DbSet<Market> Markets { get; set; }
+        public DbSet<PlayerMarket> PlayerMarkets { get; set; }
+        public DbSet<PlayerMarketSelection> PlayerMarketSelections { get; set; }
         public DbSet<MarketSelection> MarketSelections { get; set; }
+        public DbSet<Player> Players { get; set; }
+        public DbSet<PlayerMatchStats> PlayerMatchStats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Claves primarias
-            modelBuilder.Entity<User>().HasKey(u => u.Id);
+             modelBuilder.Entity<User>().HasKey(u => u.Id);
             modelBuilder.Entity<Sport>().HasKey(s => s.Id);
             modelBuilder.Entity<League>().HasKey(l => l.Id);
             modelBuilder.Entity<Team>().HasKey(t => t.Id);
@@ -32,9 +36,13 @@ namespace BetTime.Data
             modelBuilder.Entity<Bet>().HasKey(b => b.Id);
             modelBuilder.Entity<Market>().HasKey(m => m.Id);
             modelBuilder.Entity<MarketSelection>().HasKey(s => s.Id);
+            modelBuilder.Entity<Player>().HasKey(p => p.Id);
+            modelBuilder.Entity<PlayerMatchStats>().HasKey(s => s.Id);
+            modelBuilder.Entity<PlayerMarket>().HasKey(pm => pm.Id);
+            modelBuilder.Entity<PlayerMarketSelection>().HasKey(s => s.Id);
 
-            // Relaciones
-           modelBuilder.Entity<User>()
+    modelBuilder.Entity<User>()
+
     .HasMany(u => u.Transactions)
     .WithOne(t => t.User)
     .HasForeignKey(t => t.UserId)
@@ -65,7 +73,7 @@ modelBuilder.Entity<League>()
     .HasForeignKey(m => m.LeagueId)
     .OnDelete(DeleteBehavior.Cascade);
 
-// Equipos y partidos
+
 modelBuilder.Entity<Team>()
     .HasMany(t => t.HomeMatches)
     .WithOne(m => m.HomeTeam)
@@ -78,26 +86,74 @@ modelBuilder.Entity<Team>()
     .HasForeignKey(m => m.AwayTeamId)
     .OnDelete(DeleteBehavior.Restrict);
 
-// Partidos y mercados
+
 modelBuilder.Entity<Match>()
     .HasMany(m => m.Markets)
     .WithOne(market => market.Match)
     .HasForeignKey(market => market.MatchId)
     .OnDelete(DeleteBehavior.Cascade);
 
-// Mercados y selecciones
+
 modelBuilder.Entity<Market>()
     .HasMany(m => m.Selections)
     .WithOne(s => s.Market)
     .HasForeignKey(s => s.MarketId)
     .OnDelete(DeleteBehavior.Cascade);
 
-// Partidos y apuestas
+
     modelBuilder.Entity<Match>()
     .HasMany(m => m.Bets)
     .WithOne(b => b.Match)
     .HasForeignKey(b => b.MatchId)
     .OnDelete(DeleteBehavior.NoAction); 
+
+     modelBuilder.Entity<Player>()
+                .HasMany(p => p.MatchStats)
+                .WithOne(s => s.Player)
+                .HasForeignKey(s => s.PlayerId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<PlayerMatchStats>()
+                .HasOne(s => s.Player)
+                .WithMany(p => p.MatchStats)
+                .HasForeignKey(s => s.PlayerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PlayerMatchStats>()
+                .HasOne<Match>()
+                .WithMany(m => m.PlayerMatchStats)
+                .HasForeignKey(s => s.MatchId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<PlayerMarket>()
+                .HasOne(pm => pm.Player)
+                .WithMany(p => p.PlayerMarkets)
+                .HasForeignKey(pm => pm.PlayerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+           modelBuilder.Entity<PlayerMarket>()
+            .HasOne(pm => pm.Match)     
+            .WithMany(m => m.PlayerMarkets)
+            .HasForeignKey(pm => pm.MatchId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PlayerMarket>()
+                .HasMany(pm => pm.Selections)
+                .WithOne(s => s.PlayerMarket)
+                .HasForeignKey(s => s.PlayerMarketId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PlayerMarketSelection>()
+                .HasOne(s => s.PlayerMarket)
+                .WithMany(pm => pm.Selections)
+                .HasForeignKey(s => s.PlayerMarketId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Bet>()
+                .HasOne(b => b.PlayerMarketSelection)
+                .WithMany() 
+                .HasForeignKey(b => b.PlayerMarketSelectionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             // Seed de datos
             modelBuilder.Entity<User>().HasData(
@@ -187,6 +243,77 @@ modelBuilder.Entity<Market>()
                 new MarketSelection { Id = 14, MarketId = 6, Name = "Más de 2.5 goles", Odd = 2.2m },
                 new MarketSelection { Id = 15, MarketId = 6, Name = "Menos de 2.5 goles", Odd = 1.65m }
             );
+
+            modelBuilder.Entity<Player>().HasData(
+    
+    new Player { Id = 1, Name = "Courtois", TeamId = 1, IsActive = true },
+    new Player { Id = 2, Name = "Carvajal", TeamId = 1, IsActive = true },
+    new Player { Id = 3, Name = "Militao", TeamId = 1, IsActive = true },
+    new Player { Id = 4, Name = "Alaba", TeamId = 1, IsActive = true },
+    new Player { Id = 5, Name = "Mendy", TeamId = 1, IsActive = true },
+    new Player { Id = 6, Name = "Modric", TeamId = 1, IsActive = true },
+    new Player { Id = 7, Name = "Casemiro", TeamId = 1, IsActive = true },
+    new Player { Id = 8, Name = "Kroos", TeamId = 1, IsActive = true },
+    new Player { Id = 9, Name = "Vinicius", TeamId = 1, IsActive = true },
+    new Player { Id = 10, Name = "Benzema", TeamId = 1, IsActive = true },
+    new Player { Id = 11, Name = "Rodrygo", TeamId = 1, IsActive = true },
+
+   
+    new Player { Id = 12, Name = "Ter Stegen", TeamId = 2, IsActive = true },
+    new Player { Id = 13, Name = "Dest", TeamId = 2, IsActive = true },
+    new Player { Id = 14, Name = "Piqué", TeamId = 2, IsActive = true },
+    new Player { Id = 15, Name = "Araujo", TeamId = 2, IsActive = true },
+    new Player { Id = 16, Name = "Alba", TeamId = 2, IsActive = true },
+    new Player { Id = 17, Name = "Busquets", TeamId = 2, IsActive = true },
+    new Player { Id = 18, Name = "Pedri", TeamId = 2, IsActive = true },
+    new Player { Id = 19, Name = "Gavi", TeamId = 2, IsActive = true },
+    new Player { Id = 20, Name = "Lewandowski", TeamId = 2, IsActive = true },
+    new Player { Id = 21, Name = "Ferran Torres", TeamId = 2, IsActive = true },
+    new Player { Id = 22, Name = "Raphinha", TeamId = 2, IsActive = true },
+
+  
+    new Player { Id = 23, Name = "Oblak", TeamId = 3, IsActive = true },
+    new Player { Id = 24, Name = "Trippier", TeamId = 3, IsActive = true },
+    new Player { Id = 25, Name = "Giménez", TeamId = 3, IsActive = true },
+    new Player { Id = 26, Name = "Savic", TeamId = 3, IsActive = true },
+    new Player { Id = 27, Name = "Reinildo", TeamId = 3, IsActive = true },
+    new Player { Id = 28, Name = "Koke", TeamId = 3, IsActive = true },
+    new Player { Id = 29, Name = "De Paul", TeamId = 3, IsActive = true },
+    new Player { Id = 30, Name = "Saul", TeamId = 3, IsActive = true },
+    new Player { Id = 31, Name = "Griezmann", TeamId = 3, IsActive = true },
+    new Player { Id = 32, Name = "Correa", TeamId = 3, IsActive = true },
+    new Player { Id = 33, Name = "Felix", TeamId = 3, IsActive = true },
+
+   
+    new Player { Id = 34, Name = "Bono", TeamId = 4, IsActive = true },
+    new Player { Id = 35, Name = "Navas", TeamId = 4, IsActive = true },
+    new Player { Id = 36, Name = "Koundé", TeamId = 4, IsActive = true },
+    new Player { Id = 37, Name = "Diego Carlos", TeamId = 4, IsActive = true },
+    new Player { Id = 38, Name = "Acuna", TeamId = 4, IsActive = true },
+    new Player { Id = 39, Name = "Fernando", TeamId = 4, IsActive = true },
+    new Player { Id = 40, Name = "Rakitic", TeamId = 4, IsActive = true },
+    new Player { Id = 41, Name = "Joan Jordán", TeamId = 4, IsActive = true },
+    new Player { Id = 42, Name = "En-Nesyri", TeamId = 4, IsActive = true },
+    new Player { Id = 43, Name = "Ocampos", TeamId = 4, IsActive = true },
+    new Player { Id = 44, Name = "Martínez", TeamId = 4, IsActive = true },
+
+   
+    new Player { Id = 45, Name = "Cillessen", TeamId = 5, IsActive = true },
+    new Player { Id = 46, Name = "Gaya", TeamId = 5, IsActive = true },
+    new Player { Id = 47, Name = "Alderete", TeamId = 5, IsActive = true },
+    new Player { Id = 48, Name = "Diakhaby", TeamId = 5, IsActive = true },
+    new Player { Id = 49, Name = "Foulquier", TeamId = 5, IsActive = true },
+    new Player { Id = 50, Name = "Soler", TeamId = 5, IsActive = true },
+    new Player { Id = 51, Name = "Cáceres", TeamId = 5, IsActive = true },
+    new Player { Id = 52, Name = "Guedes", TeamId = 5, IsActive = true },
+    new Player { Id = 53, Name = "D. Almeida", TeamId = 5, IsActive = true },
+    new Player { Id = 54, Name = "Moreno", TeamId = 5, IsActive = true },
+    new Player { Id = 55, Name = "Cheryshev", TeamId = 5, IsActive = true }
+
+    
+);
+            
+        
 
             base.OnModelCreating(modelBuilder);
         }

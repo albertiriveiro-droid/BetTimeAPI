@@ -14,6 +14,8 @@ public class Team
     [JsonIgnore]
     public League? League { get; set; }
 
+    public ICollection<Player> Players { get; set; } 
+
     public ICollection<Match> HomeMatches { get; set; }
 
     public ICollection<Match> AwayMatches { get; set; }
@@ -26,5 +28,6 @@ public class Team
         LeagueId = leagueId;
         HomeMatches = new List<Match>();
         AwayMatches = new List<Match>();
+        Players = new List<Player>();
     }
 }

@@ -32,14 +32,16 @@ public IEnumerable<Team> GetTeamsByLeague(int leagueId)
     return _context.Teams
         .Where(t => t.LeagueId == leagueId)
         .Include(t => t.League)
+        .Include(t => t.Players) 
         .ToList();
 }
 
-public Team GetTeamById(int TeamId)
-    {
-         var team = _context.Teams.FirstOrDefault(team => team.Id == TeamId);
-        return team;  
-    }
+public Team? GetTeamById(int teamId)
+{
+    return _context.Teams
+        .Include(t => t.Players) 
+        .FirstOrDefault(t => t.Id == teamId);
+}
 
 public void DeleteTeam(Team teamDelete)
     {

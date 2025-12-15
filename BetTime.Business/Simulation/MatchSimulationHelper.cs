@@ -1,5 +1,8 @@
-
 using BetTime.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace BetTime.Business
 {
     public class MatchSimulationHelper
@@ -10,8 +13,6 @@ namespace BetTime.Business
         {
             public int HomeScore { get; set; }
             public int AwayScore { get; set; }
-            public List<GolEvent> GoalEvents { get; set; } = new List<GolEvent>();
-
             public int HomeCorners { get; set; }
             public int AwayCorners { get; set; }
 
@@ -24,40 +25,48 @@ namespace BetTime.Business
             public int TotalCorners => HomeCorners + AwayCorners;
         }
 
-        public class GolEvent
+        public static MatchResult SimulateMatch(
+            List<Player> homePlayers,
+            List<Player> awayPlayers,
+            int homeGoals,
+            int awayGoals,
+            int durationMinutes)
         {
-            public int Minute { get; set; }
-            public int TeamId { get; set; }
-        }
-
-        public static MatchResult SimulateMatch(int homeTeamId, int awayTeamId, int durationMinutes)
-        {
-           
-            int maxGoals = 5;
-            int homeGoals = rnd.Next(0, maxGoals + 1);
-            int awayGoals = rnd.Next(0, maxGoals + 1);
-
-            List<GolEvent> goalEvents = new List<GolEvent>();
-            for (int i = 0; i < homeGoals; i++)
-                goalEvents.Add(new GolEvent { Minute = rnd.Next(1, durationMinutes + 1), TeamId = homeTeamId });
-
-            for (int i = 0; i < awayGoals; i++)
-                goalEvents.Add(new GolEvent { Minute = rnd.Next(1, durationMinutes + 1), TeamId = awayTeamId });
-
-            goalEvents = goalEvents.OrderBy(e => e.Minute).ToList();
-
-           
-            int homeCorners = rnd.Next(2, 11);
-            int awayCorners = rnd.Next(2, 11);
-
-            return new MatchResult
+            var result = new MatchResult
             {
                 HomeScore = homeGoals,
                 AwayScore = awayGoals,
-                GoalEvents = goalEvents,
-                HomeCorners = homeCorners,
-                AwayCorners = awayCorners
+                HomeCorners = rnd.Next(2, 11),
+                AwayCorners = rnd.Next(2, 11)
             };
+
+          
+            void GeneratePlayerStats(List<Player> players, int goals)
+            {
+                if (players == null || players.Count == 0) return;
+
+                for (int i = 0; i < goals; i++)
+                {
+                    var scorer = players[rnd.Next(players.Count)];
+                    var assisterCandidates = players.Where(p => p.Id != scorer.Id).ToList();
+                    var assister = assisterCandidates.Count > 0 ? assisterCandidates[rnd.Next(assisterCandidates.Count)] : null;
+
+                  
+                    scorer.TempGoals += 1;
+                    if (assister != null) assister.TempAssists += 1;
+                }
+
+                // Todos los jugadores juegan los minutos del partido
+                foreach (var p in players)
+                {
+                    p.TempMinutesPlayed = durationMinutes;
+                }
+            }
+
+            GeneratePlayerStats(homePlayers, homeGoals);
+            GeneratePlayerStats(awayPlayers, awayGoals);
+
+            return result;
         }
     }
 }
