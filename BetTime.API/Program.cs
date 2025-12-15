@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using BetTime.Services;
 
 ;
 
@@ -39,7 +40,15 @@ builder.Services.AddScoped<IMarketSelectionService, MarketSelectionService>();
 builder.Services.AddHostedService<MatchSimulationService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IBetService, BetService>();
+builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IPlayerMatchStatsService, PlayerMatchStatsService>();
+builder.Services.AddScoped<IPlayerMarketService, PlayerMarketService>();
+builder.Services.AddScoped<IPlayerMarketSelectionService, PlayerMarketSelectionService>();
 builder.Services.AddScoped<IUserRepository, UserEFRepository>();
+builder.Services.AddScoped<IPlayerRepository, PlayerEFRepository>();
+builder.Services.AddScoped<IPlayerMatchStatsRepository, PlayerMatchStatsEFRepository>();
+builder.Services.AddScoped<IPlayerMarketRepository, PlayerMarketEFRepository>();
+builder.Services.AddScoped<IPlayerMarketSelectionRepository, PlayerMarketSelectionEFRepository>();
 builder.Services.AddScoped<ISportRepository, SportEFRepository>();
 builder.Services.AddScoped<ILeagueRepository, LeagueEFRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamEFRepository>();

@@ -1,154 +1,230 @@
 using BetTime.Models;
 using BetTime.Data;
+using BetTime.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace BetTime.Business;
-
-public class BetService : IBetService
+namespace BetTime.Business
 {
-    private readonly IBetRepository _repository;
-    private readonly IUserRepository _userRepository;
-    private readonly IMatchRepository _matchRepository;
-
-    public BetService(IBetRepository repository, IUserRepository userRepository, IMatchRepository matchRepository)
+    public class BetService : IBetService
     {
-        _repository = repository;
-        _userRepository = userRepository;
-        _matchRepository = matchRepository;
-    }
+        private readonly IBetRepository _repository;
+        private readonly IUserRepository _userRepository;
+        private readonly IMatchRepository _matchRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IPlayerMarketSelectionService _playerMarketSelectionService;
 
-   
- public Bet CreateBet(BetCreateDTO betCreateDTO)
-{
-    var user = _userRepository.GetUserById(betCreateDTO.UserId)
-        ?? throw new KeyNotFoundException($"User with ID {betCreateDTO.UserId} not found");
-
-    var selection = _matchRepository
-        .GetAllMatches() 
-        .SelectMany(m => m.Markets)
-        .SelectMany(m => m.Selections)
-        .FirstOrDefault(s => s.Id == betCreateDTO.MarketSelectionId);
-
-    if (selection == null)
-        throw new KeyNotFoundException($"Market selection with ID {betCreateDTO.MarketSelectionId} not found");
-
-    
-    var market = selection.Market ?? throw new KeyNotFoundException("Associated market not found");
-    var match = market.Match ?? throw new KeyNotFoundException("Associated match not found");
-
-    // 3️⃣ Validaciones
-    if (match.Finished)
-        throw new InvalidOperationException("Cannot bet on a finished match.");
-
-    if (match.StartTime <= DateTime.UtcNow)
-        throw new InvalidOperationException("Cannot bet after match has started.");
-
-    if (betCreateDTO.Amount <= 0)
-        throw new ArgumentException("Bet amount must be greater than 0.");
-
-    if (user.Balance < betCreateDTO.Amount)
-        throw new InvalidOperationException("Insufficient balance.");
-
-  
-    user.Balance -= betCreateDTO.Amount;
-    _userRepository.UpdateUser(user);
-
-    
-    var bet = new Bet
-    {
-        UserId = user.Id,
-        MatchId = match.Id,
-        MarketSelectionId = selection.Id,
-        Amount = betCreateDTO.Amount,
-        PlacedAt = DateTime.UtcNow
-    };
-
-    _repository.AddBet(bet);
-    return bet;
-}
-
-    public Bet ResolveBet(int betId)
-    {
-        var bet = _repository.GetBetById(betId)
-            ?? throw new KeyNotFoundException($"Bet with ID {betId} not found");
-
-        var match = bet.Match ?? throw new KeyNotFoundException("Associated match not found");
-        var selection = bet.MarketSelection ?? throw new KeyNotFoundException("Selection not found for this bet");
-
-        if (!match.Finished)
-            throw new InvalidOperationException("Cannot resolve bet before match ends.");
-
-     
-        bet.Won = MarketResolver.Resolve(match, selection);
-
-        if (bet.Won == true)
+        public BetService(
+            IBetRepository repository,
+            IUserRepository userRepository,
+            IMatchRepository matchRepository,
+            IPlayerRepository playerRepository,
+            IPlayerMarketSelectionService playerMarketSelectionService)
         {
-            var user = _userRepository.GetUserById(bet.UserId)
-                ?? throw new KeyNotFoundException($"User with ID {bet.UserId} not found");
-
-            user.Balance += bet.Amount * selection.Odd; 
-            _userRepository.UpdateUser(user);
+            _repository = repository;
+            _userRepository = userRepository;
+            _matchRepository = matchRepository;
+            _playerRepository = playerRepository;
+            _playerMarketSelectionService = playerMarketSelectionService;
         }
 
-        _repository.UpdateBet(bet);
-        return bet;
-    }
-
-    public void ResolveBetsForMatch(int matchId)
-    {
-        var match = _matchRepository.GetMatchById(matchId)
-            ?? throw new KeyNotFoundException($"Match with ID {matchId} not found");
-
-        if (!match.Finished)
-            throw new InvalidOperationException("Match must be finished before resolving bets.");
-
-        var bets = _repository.GetBetsByMatch(matchId);
-
-        foreach (var bet in bets)
+        public Bet CreateBet(BetCreateDTO dto)
         {
-            var selection = bet.MarketSelection;
-            if (selection == null) continue;
+            var user = _userRepository.GetUserById(dto.UserId)
+                       ?? throw new KeyNotFoundException($"User {dto.UserId} not found");
 
-            bet.Won = MarketResolver.Resolve(match, selection);
+            bool hasMarketSelection = dto.MarketSelectionId.HasValue;
+            bool hasPlayerSelection = dto.PlayerMarketSelectionId.HasValue;
 
-            if (bet.Won == true)
+            if (hasMarketSelection && hasPlayerSelection)
+                throw new InvalidOperationException("Cannot bet on both market and player at the same time.");
+            if (!hasMarketSelection && !hasPlayerSelection)
+                throw new InvalidOperationException("Must bet on market or player.");
+
+            int matchId;
+            int? marketSelectionId = null;
+            int? playerMarketSelectionId = null;
+            decimal odd = 1m;
+
+            if (hasMarketSelection)
             {
-                var user = _userRepository.GetUserById(bet.UserId)
-                    ?? throw new KeyNotFoundException($"User with ID {bet.UserId} not found");
+                var selection = _matchRepository
+                    .GetAllMatches()
+                    .SelectMany(m => m.Markets)
+                    .SelectMany(m => m.Selections)
+                    .FirstOrDefault(s => s.Id == dto.MarketSelectionId)
+                    ?? throw new KeyNotFoundException("Market selection not found");
 
-                user.Balance += bet.Amount * selection.Odd;
-                _userRepository.UpdateUser(user);
+                marketSelectionId = selection.Id;
+                matchId = selection.Market?.MatchId ?? throw new KeyNotFoundException("Associated match not found");
+                odd = selection.Odd;
+
+                var match = _matchRepository.GetMatchById(matchId);
+                if (match == null) throw new KeyNotFoundException("Match not found");
+                if (match.Finished) throw new InvalidOperationException("Cannot bet on finished match");
+                if (match.StartTime <= DateTime.UtcNow) throw new InvalidOperationException("Cannot bet after match start");
+            }
+            else
+            {
+              var selection = _playerMarketSelectionService.GetPlayerSelectionById(dto.PlayerMarketSelectionId!.Value)
+                   ?? throw new KeyNotFoundException("Player market selection not found");
+                   
+                playerMarketSelectionId = selection.Id;
+                matchId = selection.PlayerMarket.MatchId;
+                odd = selection.Odd;
+
+                var match = _matchRepository.GetMatchById(matchId)
+                            ?? throw new KeyNotFoundException("Associated match not found");
+
+                if (match.Finished) throw new InvalidOperationException("Cannot bet on finished match");
+                if (match.StartTime <= DateTime.UtcNow) throw new InvalidOperationException("Cannot bet after match start");
             }
 
-            _repository.UpdateBet(bet);
+            if (dto.Amount <= 0) throw new ArgumentException("Amount must be greater than 0");
+            if (user.Balance < dto.Amount) throw new InvalidOperationException("Insufficient balance");
+
+            user.Balance -= dto.Amount;
+            _userRepository.UpdateUser(user);
+
+            var bet = new Bet
+            {
+                UserId = user.Id,
+                MatchId = matchId,
+                MarketSelectionId = marketSelectionId,
+                PlayerMarketSelectionId = playerMarketSelectionId,
+                Amount = dto.Amount,
+                PlacedAt = DateTime.UtcNow
+            };
+
+            _repository.AddBet(bet);
+            return bet;
+        }
+
+    public Bet ResolveBet(int betId)
+{
+    var bet = _repository.GetBetById(betId)
+              ?? throw new KeyNotFoundException("Bet not found");
+
+   
+    var match = _matchRepository.GetMatchById(bet.MatchId)
+                ?? throw new KeyNotFoundException("Match not found");
+
+    if (!match.Finished)
+        throw new InvalidOperationException("Match not finished");
+
+    decimal odd;
+
+    if (bet.MarketSelection != null)
+    {
+        bet.Won = MarketResolver.Resolve(match, bet.MarketSelection);
+        odd = bet.MarketSelection.Odd;
+    }
+    else if (bet.PlayerMarketSelection != null)
+    {
+        bet.Won = PlayerMarketResolver.Resolve(
+            match,
+            bet.PlayerMarketSelection,
+            _playerRepository
+        );
+        odd = bet.PlayerMarketSelection.Odd;
+    }
+    else
+    {
+        throw new InvalidOperationException("Invalid bet: no selection");
+    }
+
+    if (bet.Won == true)
+    {
+        var user = _userRepository.GetUserById(bet.UserId)
+                   ?? throw new KeyNotFoundException("User not found");
+
+        user.Balance += bet.Amount * odd;
+        _userRepository.UpdateUser(user);
+    }
+
+    _repository.UpdateBet(bet);
+    return bet;
+}
+public void ResolveBetsForMatch(int matchId)
+{
+    var match = _matchRepository.GetMatchById(matchId)
+        ?? throw new KeyNotFoundException("Match not found");
+
+    if (!match.Finished)
+        throw new InvalidOperationException("Match not finished");
+
+    var bets = _repository.GetBetsByMatch(matchId);
+
+    foreach (var bet in bets)
+    {
+        ResolveBet(bet.Id);
+    }
+}
+
+
+        public Bet GetBetById(int betId) => _repository.GetBetById(betId)
+                                               ?? throw new KeyNotFoundException("Bet not found");
+
+        public IEnumerable<Bet> GetAllBets() => _repository.GetAllBets();
+        public IEnumerable<Bet> GetBetsByUser(int userId) => _repository.GetBetsByUser(userId);
+        public IEnumerable<Bet> GetBetsByMatch(int matchId) => _repository.GetBetsByMatch(matchId);
+
+        public IEnumerable<BetOutputDTO> GetWonBets(int userId) =>
+            _repository.GetWonBets(userId).Select(MapToDTO);
+
+        public IEnumerable<BetOutputDTO> GetLostBets(int userId) =>
+            _repository.GetLostBets(userId).Select(MapToDTO);
+
+        public IEnumerable<Bet> GetActiveBets() => _repository.GetActiveBets();
+        public IEnumerable<Bet> GetFinishedBets() => _repository.GetFinishedBets();
+
+        private BetOutputDTO MapToDTO(Bet bet)
+        {
+            string? playerName = null;
+            string? playerMarketType = null;
+
+            if (bet.PlayerMarketSelectionId.HasValue)
+            {
+                var selection = _playerMarketSelectionService
+                    .GetSelectionByPlayerId(bet.PlayerMarketSelectionId.Value);
+
+                if (selection != null)
+                {
+                    playerName = _playerRepository.GetPlayerById(selection.PlayerMarket.PlayerId)?.Name;
+                    playerMarketType = selection.PlayerMarket.PlayerMarketType.ToString();
+                }
+            }
+
+            string? marketType = null;
+            string? selectionName = null;
+
+            if (bet.MarketSelectionId != 0 && bet.MarketSelection != null)
+            {
+                marketType = bet.MarketSelection.Market?.MarketType.ToString();
+                selectionName = bet.MarketSelection.Name;
+            }
+
+            decimal odds = bet.MarketSelection?.Odd ??
+                           (bet.PlayerMarketSelectionId.HasValue
+                            ? _playerMarketSelectionService
+                                .GetSelectionByPlayerId(bet.PlayerMarketSelectionId.Value).Odd
+                            : 1m);
+
+            return new BetOutputDTO
+            {
+                Id = bet.Id,
+                MatchId = bet.MatchId,
+                MarketType = marketType,
+                SelectionName = selectionName,
+                PlayerName = playerName,
+                PlayerMarketType = playerMarketType,
+                AmountBet = bet.Amount,
+                Odds = odds,
+                Won = bet.Won,
+                AmountWon = bet.Won == true ? bet.Amount * odds : 0,
+                Date = bet.PlacedAt
+            };
         }
     }
-
-    // Consultas generales
-    public Bet GetBetById(int betId)
-    {
-        return _repository.GetBetById(betId)
-            ?? throw new KeyNotFoundException($"Bet with ID {betId} not found");
-    }
-
-    public IEnumerable<Bet> GetAllBets() => _repository.GetAllBets();
-    public IEnumerable<Bet> GetBetsByUser(int userId) => _repository.GetBetsByUser(userId);
-    public IEnumerable<Bet> GetBetsByMatch(int matchId) => _repository.GetBetsByMatch(matchId);
-    public IEnumerable<Bet> GetActiveBets() => _repository.GetActiveBets();
-    public IEnumerable<Bet> GetFinishedBets() => _repository.GetFinishedBets();
-
-    public IEnumerable<BetOutputDTO> GetWonBets(int userId) =>
-        _repository.GetWonBets(userId).Select(MapToDTO);
-
-    public IEnumerable<BetOutputDTO> GetLostBets(int userId) =>
-        _repository.GetLostBets(userId).Select(MapToDTO);
-
-    private BetOutputDTO MapToDTO(Bet bet) => new()
-    {
-        Id = bet.Id,
-        MatchId = bet.MatchId,
-        AmountBet = bet.Amount,
-        Won = bet.Won,
-        AmountWon = bet.Won == true && bet.MarketSelection != null ? bet.Amount * bet.MarketSelection.Odd : 0,
-        Date = bet.PlacedAt
-    };
 }

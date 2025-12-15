@@ -1,5 +1,6 @@
 using BetTime.Data;
 using BetTime.Models;
+using BetTime.Services;
 
 namespace BetTime.Business;
 
@@ -8,42 +9,83 @@ public class MatchService : IMatchService
     private readonly IMatchRepository _repository;
     private readonly ILeagueRepository _leagueRepository;
     private readonly ITeamRepository _teamRepository;
+    private readonly IPlayerRepository _playerRepository;
+    private readonly IPlayerMatchStatsService _playerMatchStatsService;
+    private readonly IPlayerMarketService _playerMarketService;
 
     public MatchService(
         IMatchRepository matchRepository,
         ILeagueRepository leagueRepository,
-        ITeamRepository teamRepository)
+        ITeamRepository teamRepository,
+        IPlayerRepository playerRepository,
+        IPlayerMatchStatsService playerMatchStatsService,
+        IPlayerMarketService playerMarketService)
     {
         _repository = matchRepository;
         _leagueRepository = leagueRepository;
         _teamRepository = teamRepository;
+        _playerRepository = playerRepository;
+        _playerMatchStatsService = playerMatchStatsService;
+        _playerMarketService = playerMarketService;
     }
 
     public Match CreateMatch(MatchCreateDTO matchCreateDTO)
-{
-    if (matchCreateDTO.HomeTeamId == matchCreateDTO.AwayTeamId)
-        throw new ArgumentException("A match cannot have the same team as home and away.");   
+    {
+        if (matchCreateDTO.HomeTeamId == matchCreateDTO.AwayTeamId)
+            throw new ArgumentException("A match cannot have the same team as home and away.");   
         
-    if (_leagueRepository.GetLeagueById(matchCreateDTO.LeagueId) == null)
-        throw new KeyNotFoundException($"League with ID {matchCreateDTO.LeagueId} not found");
+        if (_leagueRepository.GetLeagueById(matchCreateDTO.LeagueId) == null)
+            throw new KeyNotFoundException($"League with ID {matchCreateDTO.LeagueId} not found");
 
-    if (_teamRepository.GetTeamById(matchCreateDTO.HomeTeamId) == null)
-        throw new KeyNotFoundException($"Home team with ID {matchCreateDTO.HomeTeamId} not found");
+        if (_teamRepository.GetTeamById(matchCreateDTO.HomeTeamId) == null)
+            throw new KeyNotFoundException($"Home team with ID {matchCreateDTO.HomeTeamId} not found");
 
-    if (_teamRepository.GetTeamById(matchCreateDTO.AwayTeamId) == null)
-        throw new KeyNotFoundException($"Away team with ID {matchCreateDTO.AwayTeamId} not found");
+        if (_teamRepository.GetTeamById(matchCreateDTO.AwayTeamId) == null)
+            throw new KeyNotFoundException($"Away team with ID {matchCreateDTO.AwayTeamId} not found");
 
-    var match = new Match(
-        matchCreateDTO.LeagueId,
-        matchCreateDTO.HomeTeamId,
-        matchCreateDTO.AwayTeamId,
-        matchCreateDTO.StartTime,
-        matchCreateDTO.DurationMinutes
-    );
+        var match = new Match(
+            matchCreateDTO.LeagueId,
+            matchCreateDTO.HomeTeamId,
+            matchCreateDTO.AwayTeamId,
+            matchCreateDTO.StartTime,
+            matchCreateDTO.DurationMinutes
+        );
 
-    _repository.AddMatch(match);
-    return match;
-}    public IEnumerable<Match> GetAllMatches() => _repository.GetAllMatches();
+        _repository.AddMatch(match);
+
+        // Crear stats y mercados de jugadores
+        var homePlayers = _playerRepository.GetPlayerByTeam(match.HomeTeamId)
+                                           .Where(p => p.IsActive).ToList();
+        var awayPlayers = _playerRepository.GetPlayerByTeam(match.AwayTeamId)
+                                           .Where(p => p.IsActive).ToList();
+              if (!homePlayers.Any())
+        throw new InvalidOperationException($"El equipo local (ID {match.HomeTeamId}) no tiene jugadores activos.");
+
+        if (!awayPlayers.Any())
+        throw new InvalidOperationException($"El equipo visitante (ID {match.AwayTeamId}) no tiene jugadores activos.");
+
+      
+
+        foreach (var player in homePlayers.Concat(awayPlayers))
+        {
+            
+            _playerMatchStatsService.CreatePlayerMatchStats(new PlayerMatchStatsDTO
+            {
+                PlayerId = player.Id,
+                MatchId = match.Id,
+                Goals = 0,
+                Assists = 0,
+                MinutesPlayed = 0
+            });
+
+           
+            
+        }
+
+        return match;
+    }
+
+    public IEnumerable<Match> GetAllMatches() => _repository.GetAllMatches();
 
     public Match GetMatchById(int matchId)
     {

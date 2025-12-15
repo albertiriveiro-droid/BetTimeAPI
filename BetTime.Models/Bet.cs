@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+
 namespace BetTime.Models;
 public class Bet
 {
@@ -17,10 +18,17 @@ public class Bet
     [JsonIgnore]
     public Match? Match { get; set; }
 
+    
     [ForeignKey("MarketSelection")]
-    public int MarketSelectionId { get; set; }
+    public int? MarketSelectionId { get; set; }
     [JsonIgnore]
-    public MarketSelection MarketSelection { get; set; }
+    public MarketSelection? MarketSelection { get; set; }
+
+
+    [ForeignKey("PlayerMarketSelection")]
+    public int? PlayerMarketSelectionId { get; set; }
+    [JsonIgnore]
+    public PlayerMarketSelection? PlayerMarketSelection { get; set; }
 
     [Required]
     [Column(TypeName = "decimal(10,2)")]
@@ -31,11 +39,12 @@ public class Bet
 
     public Bet() {}
 
-    public Bet(int userId, int matchId, int marketSelectionId, decimal amount)
+    public Bet(int userId, int matchId, int marketSelectionId, int playerMarketSelectionId, decimal amount)
     {
         UserId = userId;
         MatchId = matchId;
         MarketSelectionId = marketSelectionId;
+        PlayerMarketSelectionId= playerMarketSelectionId;
         Amount = amount;
         Won = null;
         PlacedAt = DateTime.UtcNow;
