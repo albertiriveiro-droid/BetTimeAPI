@@ -21,8 +21,9 @@ public class LeagueEFRepository : ILeagueRepository
 
     public IEnumerable<League> GetAllLeagues()
     {
-        var leagues= _context.Leagues;
-        return leagues;
+       return _context.Leagues
+       .Include(l=>l.Teams)
+       .ToList();
     }
 
      public IEnumerable<League> GetLeaguesBySport(int sportId)
@@ -30,6 +31,7 @@ public class LeagueEFRepository : ILeagueRepository
             return _context.Leagues
                 .Where(l => l.SportId == sportId)
                 .Include(l => l.Sport)
+                .Include(l=>l.Teams)
                 .ToList();
         }
 
@@ -37,6 +39,7 @@ public class LeagueEFRepository : ILeagueRepository
 {
     var league = _context.Leagues
         .Include(l => l.Sport)
+        .Include(l=>l.Teams)
         .FirstOrDefault(l => l.Id == LeagueId);
 
     return league;
@@ -54,6 +57,12 @@ public class LeagueEFRepository : ILeagueRepository
     _context.Entry(league).State = EntityState.Modified;
     SaveChanges();
     }
+
+    public bool LeagueNameExists(string name)
+{
+    return _context.Leagues.Any(l => l.Name == name);
+}
+
 
     public void SaveChanges()
     {

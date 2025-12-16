@@ -1,5 +1,6 @@
 using BetTime.Data;
 using BetTime.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BetTime.Business;
 
@@ -16,18 +17,34 @@ public class LeagueService : ILeagueService
 
 
 public League CreateLeague(LeagueCreateDTO leagueCreateDTO)
-    {
-        if (string.IsNullOrWhiteSpace(leagueCreateDTO.Name))
+{
+    if (string.IsNullOrWhiteSpace(leagueCreateDTO.Name))
         throw new ArgumentException("League name is required");
-        var sport= _sportRepository.GetSportById(leagueCreateDTO.SportId);
-        if(sport == null)
-        {
-          throw new KeyNotFoundException($"Sport with ID {leagueCreateDTO.SportId} not found");   
-        }
-        var league= new League(leagueCreateDTO.Name, leagueCreateDTO.SportId);
+
+  
+    var sport = _sportRepository.GetSportById(leagueCreateDTO.SportId);
+    if (sport == null)
+        throw new KeyNotFoundException($"Sport with ID {leagueCreateDTO.SportId} not found");
+
+  
+    if (_repository.LeagueNameExists(leagueCreateDTO.Name))
+        throw new InvalidOperationException("A league with this name already exists.");
+
+  
+    var league = new League(leagueCreateDTO.Name.Trim(), leagueCreateDTO.SportId);
+
+    try
+    {
         _repository.AddLeague(league);
-        return league;
     }
+    catch (DbUpdateException)
+    {
+        throw new InvalidOperationException("A league with this name already exists.");
+    }
+
+    return league;
+}
+
 
 public IEnumerable<League> GetAllLeagues()
     {
@@ -57,26 +74,38 @@ var league= _repository.GetLeagueById(leagueId);
 _repository.DeleteLeague(league);
     }
 
- public void UpdateLeague(int leagueId, LeagueUpdateDTO leagueUpdateDTO)
+ public void UpdateLeague(int leagueId, LeagueUpdateDTO dto)
+{
+    var league = _repository.GetLeagueById(leagueId)
+        ?? throw new KeyNotFoundException($"League with ID {leagueId} not found");
+
+    if (!string.IsNullOrWhiteSpace(dto.Name) && dto.Name != league.Name)
     {
-        var league = _repository.GetLeagueById(leagueId);
-        if (league == null)
-            throw new KeyNotFoundException($"League with ID {leagueId} not found");
+        if (_repository.LeagueNameExists(dto.Name))
+            throw new InvalidOperationException("A league with this name already exists.");
 
-        if (!string.IsNullOrEmpty(leagueUpdateDTO.Name))
-            league.Name = leagueUpdateDTO.Name;
-
-        if (leagueUpdateDTO.SportId.HasValue)
-        {
-            var sport = _sportRepository.GetSportById(leagueUpdateDTO.SportId.Value);
-            if (sport == null)
-                throw new KeyNotFoundException($"Sport with ID {leagueUpdateDTO.SportId.Value} not found");
-            league.SportId = leagueUpdateDTO.SportId.Value;
-        }
-
-        _repository.UpdateLeague(league);
-
+        league.Name = dto.Name.Trim();
     }
+
+    if (dto.SportId.HasValue && dto.SportId.Value != league.SportId)
+    {
+        var sport = _sportRepository.GetSportById(dto.SportId.Value);
+        if (sport == null)
+            throw new KeyNotFoundException($"Sport with ID {dto.SportId.Value} not found");
+
+        league.SportId = dto.SportId.Value;
+    }
+
+ 
+    try
+    {
+        _repository.UpdateLeague(league);
+    }
+    catch (DbUpdateException)
+    {
+        throw new InvalidOperationException("A league with this name already exists.");
+    }
+}
 
 public IEnumerable<League> GetLeaguesBySport(int sportId)
     {

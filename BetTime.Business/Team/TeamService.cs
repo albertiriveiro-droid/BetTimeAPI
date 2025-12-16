@@ -1,5 +1,6 @@
 using BetTime.Data;
 using BetTime.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BetTime.Business;
 
@@ -15,21 +16,35 @@ public class TeamService : ITeamService
     }
 
 public Team CreateTeam(TeamCreateDTO teamCreateDTO)
+{
+    
+    if (string.IsNullOrWhiteSpace(teamCreateDTO.Name))
+        throw new ArgumentException("Team name is required");
+
+    
+    var league = _leagueRepository.GetLeagueById(teamCreateDTO.LeagueId);
+    if (league == null)
+        throw new KeyNotFoundException($"League with ID {teamCreateDTO.LeagueId} not found");
+
+    if (_repository.TeamNameExists(teamCreateDTO.Name))
+        throw new InvalidOperationException("A team with this name already exists.");
+
+  
+    var team = new Team(teamCreateDTO.Name.Trim(), teamCreateDTO.LeagueId);
+
+    try
+    {
+        _repository.AddTeam(team);
+    }
+    catch (DbUpdateException)
     {
 
-    if (string.IsNullOrWhiteSpace(teamCreateDTO.Name))
-            throw new ArgumentException("Team name is required");
-
-        
-        var league = _leagueRepository.GetLeagueById(teamCreateDTO.LeagueId);
-        if (league == null)
-        throw new KeyNotFoundException($"League with ID {teamCreateDTO.LeagueId} not found");
-        var team= new Team(teamCreateDTO.Name, teamCreateDTO.LeagueId);
-
-        _repository.AddTeam(team);
-        return team;
-
+        throw new InvalidOperationException("A team with this name already exists.");
     }
+
+    return team;
+}
+
 public IEnumerable<Team> GetAllTeams()
     {
 
@@ -61,27 +76,38 @@ public void DeleteTeam(int teamId)
     
 }
 
-public void UpdateTeam(int id, TeamUpdateDTO teamUpdateDTO)
+public void UpdateTeam(int id, TeamUpdateDTO dto)
+{
+    var team = _repository.GetTeamById(id)
+        ?? throw new KeyNotFoundException($"Team with ID {id} not found");
+
+    if (!string.IsNullOrWhiteSpace(dto.Name) && dto.Name != team.Name)
     {
+        if (_repository.TeamNameExists(dto.Name))
+            throw new InvalidOperationException("A team with this name already exists.");
 
-var team= _repository.GetTeamById(id);
-        if (team == null)
-        {
-          throw new KeyNotFoundException($"Team with ID {id} not found");  
-        }
-    if (!string.IsNullOrWhiteSpace(teamUpdateDTO.Name))
-    team.Name= teamUpdateDTO.Name;
-    if (teamUpdateDTO.LeagueId.HasValue)
-        {
-          
-        var league = _leagueRepository.GetLeagueById(teamUpdateDTO.LeagueId.Value);
+        team.Name = dto.Name.Trim();
+    }
+
+    
+    if (dto.LeagueId.HasValue && dto.LeagueId.Value != team.LeagueId)
+    {
+        var league = _leagueRepository.GetLeagueById(dto.LeagueId.Value);
         if (league == null)
-        throw new KeyNotFoundException($"League with ID {teamUpdateDTO.LeagueId.Value} not found");
+            throw new KeyNotFoundException($"League with ID {dto.LeagueId.Value} not found");
 
-        team.LeagueId = teamUpdateDTO.LeagueId.Value;
-        }
+        team.LeagueId = dto.LeagueId.Value;
+    }
 
+    try
+    {
         _repository.UpdateTeam(team);
     }
+    catch (DbUpdateException)
+    {
+        
+        throw new InvalidOperationException("A team with this name already exists.");
+    }
+}
 
 }

@@ -9,13 +9,19 @@ namespace BetTime.Services
 {
     private readonly IPlayerMarketSelectionRepository _selectionRepository;
     private readonly IPlayerMarketRepository _playerMarketRepository;
+    private readonly IMatchRepository _matchRepository;   
+    private readonly IPlayerRepository _playerRepository; 
 
     public PlayerMarketSelectionService(
         IPlayerMarketSelectionRepository selectionRepository,
-        IPlayerMarketRepository playerMarketRepository)
+        IPlayerMarketRepository playerMarketRepository,
+        IMatchRepository matchRepository,       
+        IPlayerRepository playerRepository)      
     {
         _selectionRepository = selectionRepository;
         _playerMarketRepository = playerMarketRepository;
+        _matchRepository = matchRepository;       
+        _playerRepository = playerRepository;    
     }
         public PlayerMarketSelection CreatePlayerSelection(int playerMarketId, PlayerMarketSelectionCreateDTO dto)
         {
@@ -35,6 +41,7 @@ namespace BetTime.Services
            
             if (!playerMarket.IsOpen)
                 throw new InvalidOperationException("Cannot add selections to a closed PlayerMarket");
+
 
             var selection = new PlayerMarketSelection
             {

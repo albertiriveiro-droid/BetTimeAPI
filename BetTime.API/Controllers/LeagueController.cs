@@ -18,6 +18,29 @@ public class LeagueController : ControllerBase
         _leagueService = leagueService;
     }
 
+    [Authorize(Roles = Roles.Admin)]
+    [HttpPost]
+    public IActionResult CreateLeague([FromBody] LeagueCreateDTO leagueCreateDTO)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+            var league = _leagueService.CreateLeague(leagueCreateDTO);
+            return CreatedAtRoute("GetLeagueById", new { leagueId = league.Id }, league);
+        }
+        catch (KeyNotFoundException knfex)
+        {
+            _logger.LogWarning(knfex.Message);
+            return NotFound(knfex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error creating league: {ex.Message}");
+            return BadRequest($"Error creating league: {ex.Message}");
+        }
+    }
+
    
     [HttpGet]
     public ActionResult<IEnumerable<League>> GetAllLeagues()
@@ -72,28 +95,7 @@ public class LeagueController : ControllerBase
     }
 
    
-    [Authorize(Roles = Roles.Admin)]
-    [HttpPost]
-    public IActionResult CreateLeague([FromBody] LeagueCreateDTO leagueCreateDTO)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        try
-        {
-            var league = _leagueService.CreateLeague(leagueCreateDTO);
-            return CreatedAtRoute("GetLeagueById", new { leagueId = league.Id }, league);
-        }
-        catch (KeyNotFoundException knfex)
-        {
-            _logger.LogWarning(knfex.Message);
-            return NotFound(knfex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error creating league: {ex.Message}");
-            return BadRequest($"Error creating league: {ex.Message}");
-        }
-    }
+    
 
     
     [Authorize(Roles = Roles.Admin)]

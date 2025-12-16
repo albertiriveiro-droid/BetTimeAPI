@@ -21,15 +21,19 @@ public void AddSport(Sport sport)
     }
 
 public IEnumerable<Sport> GetAllSports()
-    {
-    var sports= _context.Sports;
-    return sports;
-    }
-public Sport GetSportById(int SportId)
-    {
-         var sport = _context.Sports.FirstOrDefault(sport => sport.Id == SportId);
-        return sport;  
-    }
+{
+    return _context.Sports
+        .Include(s => s.Leagues) 
+        .ToList();
+}
+public Sport GetSportById(int sportId)
+{
+    var sport = _context.Sports
+        .Include(s => s.Leagues) 
+        .FirstOrDefault(s => s.Id == sportId);
+
+    return sport;
+}
 
 public void DeleteSport(Sport sportDelete)
     {
@@ -43,6 +47,11 @@ public void UpdateSport(Sport sport)
         _context.Entry(sport).State = EntityState.Modified;
             SaveChanges();
     }
+
+public bool SportNameExists(string name)
+{
+    return _context.Sports.Any(s => s.Name == name);
+}
 
 
 public void SaveChanges()

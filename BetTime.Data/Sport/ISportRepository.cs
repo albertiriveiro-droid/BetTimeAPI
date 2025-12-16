@@ -11,6 +11,7 @@ public interface ISportRepository
  Sport GetSportById(int SportId);
  void DeleteSport(Sport sport);
  void UpdateSport(Sport sport);
+ bool SportNameExists(string name);
  void SaveChanges();  
 }
 

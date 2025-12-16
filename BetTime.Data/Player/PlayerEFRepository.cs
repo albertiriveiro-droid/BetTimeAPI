@@ -39,6 +39,10 @@ public class PlayerEFRepository : IPlayerRepository
         SaveChanges();
     }
 
+    public bool PlayerNameExists(string name)
+{
+    return _context.Players.Any(p => p.Name == name);
+}
     public void SaveChanges()
     {
     _context.SaveChanges();    

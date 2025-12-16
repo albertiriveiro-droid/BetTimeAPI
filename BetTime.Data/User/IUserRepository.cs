@@ -11,5 +11,7 @@ User GetUserByEmail(string email);
 User GetUserById(int UserId);
 void DeleteUser(User user);
 void UpdateUser (User user);
+ bool EmailExists(string email);
+bool UsernameExists(string username);
 void SaveChanges();   
 }

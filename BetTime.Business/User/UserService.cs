@@ -1,5 +1,6 @@
 using BetTime.Models;
 using BetTime.Data;
+using Microsoft.EntityFrameworkCore;
 namespace BetTime.Business;
 
 public class UserService : IUserService
@@ -14,8 +15,12 @@ public UserService(IUserRepository repository)
 
 public User RegisterUser(UserCreateDTO userCreateDTO)
     {
-         if (IsEmailTaken(userCreateDTO.Email))
-            throw new InvalidOperationException("Email already in use.");
+         if (_repository.EmailExists(userCreateDTO.Email))
+        throw new InvalidOperationException("Email already in use.");
+
+    if (_repository.UsernameExists(userCreateDTO.Username))
+        throw new InvalidOperationException("Username already in use.");
+
 
         var user = new User(userCreateDTO.Username, userCreateDTO.Email, userCreateDTO.Password);
         _repository.AddUser(user);
@@ -53,34 +58,50 @@ public void DeleteUser(int userId)
     _repository.DeleteUser(user);
 
     }
-public void UpdateUser (int id, UserUpdateDTO userUpdateDTO)
+    
+public void UpdateUser(int id, UserUpdateDTO userUpdateDTO)
+{
+    var user = _repository.GetUserById(id)
+        ?? throw new KeyNotFoundException($"User with ID {id} not found.");
+
+    
+    if (!string.IsNullOrWhiteSpace(userUpdateDTO.Username) &&
+        !userUpdateDTO.Username.Equals(user.Username, StringComparison.OrdinalIgnoreCase))
     {
-      var user = _repository.GetUserById(id) ?? 
-                   throw new KeyNotFoundException($"User with ID {id} not found.");
+        if (_repository.UsernameExists(userUpdateDTO.Username))
+            throw new InvalidOperationException("Username is already taken.");
 
-        if (!string.IsNullOrEmpty(userUpdateDTO.Username))
-            user.Username = userUpdateDTO.Username;
+        user.Username = userUpdateDTO.Username.Trim();
+    }
 
-        if (!string.IsNullOrEmpty(userUpdateDTO.Email) && userUpdateDTO.Email != user.Email)
-        {
-            if (IsEmailTaken(userUpdateDTO.Email))
-                throw new InvalidOperationException("Email is already taken.");
-            user.Email = userUpdateDTO.Email;
-        }
+  
+    if (!string.IsNullOrWhiteSpace(userUpdateDTO.Email) &&
+        !userUpdateDTO.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase))
+    {
+        if (_repository.EmailExists(userUpdateDTO.Email))
+            throw new InvalidOperationException("Email is already taken.");
 
-        if (!string.IsNullOrEmpty(userUpdateDTO.Password))
-            user.Password = userUpdateDTO.Password;
+        user.Email = userUpdateDTO.Email.Trim().ToLower();
+    }
 
+  
+    if (!string.IsNullOrWhiteSpace(userUpdateDTO.Password))
+    {
+        user.Password = userUpdateDTO.Password;
+    }
+
+    try
+    {
         _repository.UpdateUser(user);
     }
-
-
-
-public bool IsEmailTaken(string email)
+    catch (DbUpdateException)
     {
-        return _repository.GetAllUsers()
-        .Any(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+       
+        throw new InvalidOperationException("Email or username already exists.");
     }
+}
+
+
 
 
 public User loginCheck(string email, string password)

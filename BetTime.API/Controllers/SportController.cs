@@ -18,6 +18,24 @@ public class SportController : ControllerBase
         _sportService = sportService;
     }
 
+
+    [Authorize(Roles = Roles.Admin)]
+    [HttpPost]
+    public IActionResult CreateSport([FromBody] SportCreateDTO sportCreateDTO)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+            var sport = _sportService.CreateSport(sportCreateDTO);
+            return CreatedAtRoute("GetSportById", new { sportId = sport.Id }, sport);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error creating sport: {ex.Message}");
+            return BadRequest($"Error creating sport: {ex.Message}");
+        }
+    }
     
     [HttpGet]
     public ActionResult<IEnumerable<Sport>> GetAllSports()
@@ -56,25 +74,9 @@ public class SportController : ControllerBase
     }
 
    
-    [Authorize(Roles = Roles.Admin)]
-    [HttpPost]
-    public IActionResult CreateSport([FromBody] SportCreateDTO sportCreateDTO)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+    
 
-        try
-        {
-            var sport = _sportService.CreateSport(sportCreateDTO);
-            return CreatedAtRoute("GetSportById", new { sportId = sport.Id }, sport);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error creating sport: {ex.Message}");
-            return BadRequest($"Error creating sport: {ex.Message}");
-        }
-    }
-
-    // PUT: solo Admin
+   
     [Authorize(Roles = Roles.Admin)]
     [HttpPut("{sportId}")]
     public IActionResult UpdateSport(int sportId, [FromBody] SportUpdateDTO sportUpdateDTO)

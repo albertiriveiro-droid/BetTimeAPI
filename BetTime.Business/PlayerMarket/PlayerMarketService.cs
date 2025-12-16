@@ -9,11 +9,13 @@ namespace BetTime.Services
     {
         private readonly IPlayerMarketRepository _repository;
         private readonly IMatchRepository _matchRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        public PlayerMarketService(IPlayerMarketRepository repository, IMatchRepository matchRepository)
+        public PlayerMarketService(IPlayerMarketRepository repository, IMatchRepository matchRepository,   IPlayerRepository playerRepository)
         {
             _repository = repository;
             _matchRepository= matchRepository;
+             _playerRepository = playerRepository;  
         }
 
        public PlayerMarket CreatePlayerMarket(int matchId, PlayerMarketCreateDTO dto)
@@ -28,10 +30,18 @@ namespace BetTime.Services
 
     if (match.StartTime <= DateTime.UtcNow)
         throw new InvalidOperationException("Cannot create PlayerMarkets after match start");
+        
+    var playersInMatch = _playerRepository.GetPlayerByTeam(match.HomeTeamId)
+    .Concat(_playerRepository.GetPlayerByTeam(match.AwayTeamId))
+                        .Select(p => p.Id)
+                        .ToHashSet();
+
+    if (!playersInMatch.Contains(dto.PlayerId))
+        throw new InvalidOperationException("Cannot create PlayerMarket: player is not part of this match");
 
     var playerMarket = new PlayerMarket
     {
-        MatchId = matchId, // Muy importante
+        MatchId = matchId, 
         PlayerId = dto.PlayerId,
         PlayerMarketType = dto.PlayerMarketType,
         CreatedAt = DateTime.UtcNow,

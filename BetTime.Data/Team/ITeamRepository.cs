@@ -11,5 +11,6 @@ Team GetTeamById(int TeamId);
 IEnumerable<Team> GetTeamsByLeague( int LeagueId);
 void DeleteTeam(Team team);
 void UpdateTeam (Team team);
+bool TeamNameExists(string name);
 void SaveChanges();   
 }

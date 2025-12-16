@@ -55,6 +55,16 @@ public void DeleteUser(User userDelete)
             _context.Entry(user).State = EntityState.Modified;
             SaveChanges();
         }
+    
+public bool EmailExists(string email)
+{
+    return _context.Users.Any(u => u.Email == email);
+}
+
+public bool UsernameExists(string username)
+{
+    return _context.Users.Any(u => u.Username == username);
+}
 public void SaveChanges()
         {
             _context.SaveChanges();

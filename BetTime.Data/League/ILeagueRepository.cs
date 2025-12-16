@@ -11,5 +11,7 @@ public interface ILeagueRepository
     IEnumerable<League> GetLeaguesBySport(int SportId);
     void DeleteLeague(League league);
     void UpdateLeague( League league);
+
+     bool LeagueNameExists(string name);
     void SaveChanges();
 }
