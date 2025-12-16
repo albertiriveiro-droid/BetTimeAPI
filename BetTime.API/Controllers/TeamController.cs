@@ -18,6 +18,28 @@ public class TeamController : ControllerBase
         _teamService = teamService;
     }
 
+    [Authorize(Roles = Roles.Admin)]
+    [HttpPost]
+    public IActionResult CreateTeam([FromBody] TeamCreateDTO teamCreateDTO)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+            var team = _teamService.CreateTeam(teamCreateDTO);
+            return CreatedAtRoute("GetTeamById", new { teamId = team.Id }, team);
+        }
+        catch (KeyNotFoundException knfex)
+        {
+            _logger.LogWarning(knfex.Message);
+            return NotFound(knfex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error creating team: {ex.Message}");
+            return BadRequest($"Error creating team: {ex.Message}");
+        }
+    }
     
     [HttpGet]
     public ActionResult<IEnumerable<Team>> GetAllTeams()
@@ -72,28 +94,7 @@ public class TeamController : ControllerBase
     }
 
   
-    [Authorize(Roles = Roles.Admin)]
-    [HttpPost]
-    public IActionResult CreateTeam([FromBody] TeamCreateDTO teamCreateDTO)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        try
-        {
-            var team = _teamService.CreateTeam(teamCreateDTO);
-            return CreatedAtRoute("GetTeamById", new { teamId = team.Id }, team);
-        }
-        catch (KeyNotFoundException knfex)
-        {
-            _logger.LogWarning(knfex.Message);
-            return NotFound(knfex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error creating team: {ex.Message}");
-            return BadRequest($"Error creating team: {ex.Message}");
-        }
-    }
+    
 
     [Authorize(Roles = Roles.Admin)]
     [HttpPut("{teamId}")]

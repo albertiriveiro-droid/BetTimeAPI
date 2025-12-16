@@ -23,8 +23,7 @@ public void AddTeam(Team team)
 public IEnumerable<Team> GetAllTeams()
     {
      return _context.Teams
-        .Include(t => t.HomeMatches)   
-        .Include(t => t.AwayMatches)   
+        .Include(t=>t.Players)
         .ToList();
     }
 public IEnumerable<Team> GetTeamsByLeague(int leagueId)
@@ -33,6 +32,8 @@ public IEnumerable<Team> GetTeamsByLeague(int leagueId)
         .Where(t => t.LeagueId == leagueId)
         .Include(t => t.League)
         .Include(t => t.Players) 
+        .Include(t=>t.HomeMatches)
+        .Include(t=>t.AwayMatches)
         .ToList();
 }
 
@@ -40,6 +41,8 @@ public Team? GetTeamById(int teamId)
 {
     return _context.Teams
         .Include(t => t.Players) 
+         .Include(t=>t.HomeMatches)
+        .Include(t=>t.AwayMatches)
         .FirstOrDefault(t => t.Id == teamId);
 }
 
@@ -55,6 +58,12 @@ public void UpdateTeam(Team team)
         _context.Entry(team).State = EntityState.Modified;
             SaveChanges();
     }
+
+public bool TeamNameExists(string name)
+{
+    return _context.Teams.Any(t => t.Name == name);
+}
+
 
 
 public void SaveChanges()

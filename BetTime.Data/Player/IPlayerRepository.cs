@@ -9,5 +9,6 @@ public interface IPlayerRepository
     void AddPlayer(Player player);
     void UpdatePlayer(Player player);
     void DeletePlayer(Player player);
+    bool PlayerNameExists(string name);
      void SaveChanges();  
 }

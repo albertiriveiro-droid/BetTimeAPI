@@ -5,72 +5,102 @@ using BetTime.Services;
 
 namespace BetTime.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PlayerController : ControllerBase
+   [ApiController]
+[Route("api/[controller]")]
+public class PlayerController : ControllerBase
+{
+    private readonly IPlayerService _playerService;
+
+    public PlayerController(IPlayerService playerService)
     {
-        private readonly IPlayerService _playerService;
+        _playerService = playerService;
+    }
 
-        public PlayerController(IPlayerService playerService)
+
+    [HttpPost]
+    public IActionResult CreatePlayer([FromBody] PlayerCreateDTO dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
         {
-            _playerService = playerService;
+            var player = _playerService.CreatePlayer(dto);
+
+            return CreatedAtRoute(
+                "GetPlayerById",
+                new { playerId = player.Id },
+                player
+            );
         }
-
-        [HttpGet("{id}")]
-        public IActionResult GetPlayerById(int id)
+        catch (InvalidOperationException ex)
         {
-            var player = _playerService.GetPlayerById(id);
-            if (player == null) return NotFound($"Player with ID {id} not found.");
-            return Ok(player);
+            return Conflict(ex.Message); 
         }
-
-        
-        [HttpGet("team/{teamId}")]
-        public IActionResult GetPlayersByTeam(int teamId)
+        catch (KeyNotFoundException ex)
         {
-            var players = _playerService.GetPlayersByTeam(teamId);
-            return Ok(players);
-        }
-
-      
-        [HttpPost]
-        public IActionResult CreatePlayer([FromBody] PlayerCreateDTO playerDto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var player = _playerService.CreatePlayer(playerDto);
-            return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, player);
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult UpdatePlayer(int id, [FromBody] PlayerUpdateDTO playerDto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            try
-            {
-                var updatedPlayer = _playerService.UpdatePlayer(id, playerDto);
-                return Ok(updatedPlayer);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
-
-
-        [HttpDelete("{id}")]
-        public IActionResult DeletePlayer(int id)
-        {
-            try
-            {
-                _playerService.DeletePlayer(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            return NotFound(ex.Message);
         }
     }
+   
+    [HttpGet("{playerId}", Name = "GetPlayerById")]
+    public IActionResult GetPlayerById(int playerId)
+    {
+        var player = _playerService.GetPlayerById(playerId);
+        if (player == null)
+            return NotFound($"Player with ID {playerId} not found.");
+        
+        return Ok(player);
+    }
+
+    
+  
+    [HttpGet("team/{teamId}")]
+    public IActionResult GetPlayersByTeam(int teamId)
+    {
+        var players = _playerService.GetPlayersByTeam(teamId);
+        return Ok(players);
+    }
+
+   
+    
+
+   
+    [HttpPut("{playerId}")]
+    public IActionResult UpdatePlayer(int playerId, [FromBody] PlayerUpdateDTO dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var updatedPlayer = _playerService.UpdatePlayer(playerId, dto);
+            return Ok(updatedPlayer);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+    }
+
+    
+    [HttpDelete("{playerId}")]
+    public IActionResult DeletePlayer(int playerId)
+    {
+        try
+        {
+            _playerService.DeletePlayer(playerId);
+           return Ok($"Player with ID {playerId} deleted successfully.");
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+}
+
 }

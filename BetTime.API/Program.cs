@@ -59,7 +59,7 @@ builder.Services.AddScoped<ITransactionRepository, TransactionEFRepository>();
 builder.Services.AddScoped<IBetRepository, BetEFRepository>();
 
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("ServerDB_dockernet");
 
 builder.Services.AddDbContext<BetTimeContext>(options =>
     options.UseSqlServer(connectionString));
