@@ -18,4 +18,10 @@ namespace BetTime.Models
         Over,
         Under
     }
+
+    public enum BothToScoreSelection
+    {
+     Yes,
+     No   
+    }
 }

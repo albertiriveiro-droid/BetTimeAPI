@@ -74,6 +74,8 @@ namespace BetTime.Business
                             {
                                 Goals = stats.Goals + player.TempGoals,
                                 Assists = stats.Assists + player.TempAssists,
+                                YellowCards = stats.YellowCard + player.TempYellowCards,
+                                RedCards = stats.RedCard + player.TempRedCards,
                                 MinutesPlayed = stats.MinutesPlayed + player.TempMinutesPlayed
                             };
 
@@ -81,6 +83,8 @@ namespace BetTime.Business
 
                             player.TempGoals = 0;
                             player.TempAssists = 0;
+                            player.TempYellowCards = 0;
+                            player.TempRedCards = 0;
                             player.TempMinutesPlayed = 0;
                         }
 
@@ -93,6 +97,8 @@ namespace BetTime.Business
                                 s.PlayerId,
                                 s.Goals,
                                 s.Assists,
+                                s.YellowCard,
+                                s.RedCard,
                                 s.MinutesPlayed
                             })
                         );

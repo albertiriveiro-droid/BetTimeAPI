@@ -28,6 +28,22 @@ public static class PlayerMarketResolver
 
                 return playerStats != null && playerStats.Assists > 0;
 
+            case PlayerMarketType.YellowCard:
+            {
+            var stats = match.PlayerMatchStats
+            .FirstOrDefault(p => p.PlayerId == player.Id && p.MatchId == match.Id);
+
+            return stats != null && stats.YellowCard > 0;
+            }
+
+            case PlayerMarketType.RedCard:
+            {
+            var stats = match.PlayerMatchStats
+            .FirstOrDefault(p => p.PlayerId == player.Id && p.MatchId == match.Id);
+
+            return stats != null && stats.RedCard > 0;
+            }
+
           
 
             default:

@@ -158,7 +158,9 @@ namespace BetTime.Data.Migrations
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     TempGoals = table.Column<int>(type: "int", nullable: false),
                     TempAssists = table.Column<int>(type: "int", nullable: false),
-                    TempMinutesPlayed = table.Column<int>(type: "int", nullable: false)
+                    TempMinutesPlayed = table.Column<int>(type: "int", nullable: false),
+                    TempYellowCards = table.Column<int>(type: "int", nullable: false),
+                    TempRedCards = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -232,7 +234,8 @@ namespace BetTime.Data.Migrations
                     MatchId1 = table.Column<int>(type: "int", nullable: true),
                     Goals = table.Column<int>(type: "int", nullable: false),
                     Assists = table.Column<int>(type: "int", nullable: false),
-                    Shots = table.Column<int>(type: "int", nullable: false),
+                    YellowCard = table.Column<int>(type: "int", nullable: false),
+                    RedCard = table.Column<int>(type: "int", nullable: false),
                     MinutesPlayed = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -372,12 +375,12 @@ namespace BetTime.Data.Migrations
                 columns: new[] { "Id", "Amount", "Date", "Note", "PaymentMethod", "Type", "UserId" },
                 values: new object[,]
                 {
-                    { 1, 50m, new DateTime(2025, 12, 13, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5962), null, "Tarjeta", "DEPOSIT", 1 },
-                    { 2, 25m, new DateTime(2025, 12, 14, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5967), null, "PayPal", "DEPOSIT", 1 },
-                    { 3, 100m, new DateTime(2025, 12, 12, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5969), null, "Tarjeta", "DEPOSIT", 2 },
-                    { 4, 50m, new DateTime(2025, 12, 14, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5970), null, "PayPal", "WITHDRAW", 2 },
-                    { 5, 75m, new DateTime(2025, 12, 13, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5971), null, "Tarjeta", "DEPOSIT", 3 },
-                    { 6, 30m, new DateTime(2025, 12, 14, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5973), null, "PayPal", "WITHDRAW", 3 }
+                    { 1, 50m, new DateTime(2025, 12, 15, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7389), null, "Tarjeta", "DEPOSIT", 1 },
+                    { 2, 25m, new DateTime(2025, 12, 16, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7394), null, "PayPal", "DEPOSIT", 1 },
+                    { 3, 100m, new DateTime(2025, 12, 14, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7395), null, "Tarjeta", "DEPOSIT", 2 },
+                    { 4, 50m, new DateTime(2025, 12, 16, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7397), null, "PayPal", "WITHDRAW", 2 },
+                    { 5, 75m, new DateTime(2025, 12, 15, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7398), null, "Tarjeta", "DEPOSIT", 3 },
+                    { 6, 30m, new DateTime(2025, 12, 16, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7399), null, "PayPal", "WITHDRAW", 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -414,71 +417,71 @@ namespace BetTime.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "Players",
-                columns: new[] { "Id", "IsActive", "Name", "Position", "ShirtNumber", "TeamId", "TempAssists", "TempGoals", "TempMinutesPlayed" },
+                columns: new[] { "Id", "IsActive", "Name", "Position", "ShirtNumber", "TeamId", "TempAssists", "TempGoals", "TempMinutesPlayed", "TempRedCards", "TempYellowCards" },
                 values: new object[,]
                 {
-                    { 1, true, "Courtois", 0, 0, 1, 0, 0, 0 },
-                    { 2, true, "Carvajal", 0, 0, 1, 0, 0, 0 },
-                    { 3, true, "Militao", 0, 0, 1, 0, 0, 0 },
-                    { 4, true, "Alaba", 0, 0, 1, 0, 0, 0 },
-                    { 5, true, "Mendy", 0, 0, 1, 0, 0, 0 },
-                    { 6, true, "Modric", 0, 0, 1, 0, 0, 0 },
-                    { 7, true, "Casemiro", 0, 0, 1, 0, 0, 0 },
-                    { 8, true, "Kroos", 0, 0, 1, 0, 0, 0 },
-                    { 9, true, "Vinicius", 0, 0, 1, 0, 0, 0 },
-                    { 10, true, "Benzema", 0, 0, 1, 0, 0, 0 },
-                    { 11, true, "Rodrygo", 0, 0, 1, 0, 0, 0 },
-                    { 12, true, "Ter Stegen", 0, 0, 2, 0, 0, 0 },
-                    { 13, true, "Dest", 0, 0, 2, 0, 0, 0 },
-                    { 14, true, "Piqué", 0, 0, 2, 0, 0, 0 },
-                    { 15, true, "Araujo", 0, 0, 2, 0, 0, 0 },
-                    { 16, true, "Alba", 0, 0, 2, 0, 0, 0 },
-                    { 17, true, "Busquets", 0, 0, 2, 0, 0, 0 },
-                    { 18, true, "Pedri", 0, 0, 2, 0, 0, 0 },
-                    { 19, true, "Gavi", 0, 0, 2, 0, 0, 0 },
-                    { 20, true, "Lewandowski", 0, 0, 2, 0, 0, 0 },
-                    { 21, true, "Ferran Torres", 0, 0, 2, 0, 0, 0 },
-                    { 22, true, "Raphinha", 0, 0, 2, 0, 0, 0 },
-                    { 23, true, "Oblak", 0, 0, 3, 0, 0, 0 },
-                    { 24, true, "Trippier", 0, 0, 3, 0, 0, 0 },
-                    { 25, true, "Giménez", 0, 0, 3, 0, 0, 0 },
-                    { 26, true, "Savic", 0, 0, 3, 0, 0, 0 },
-                    { 27, true, "Reinildo", 0, 0, 3, 0, 0, 0 },
-                    { 28, true, "Koke", 0, 0, 3, 0, 0, 0 },
-                    { 29, true, "De Paul", 0, 0, 3, 0, 0, 0 },
-                    { 30, true, "Saul", 0, 0, 3, 0, 0, 0 },
-                    { 31, true, "Griezmann", 0, 0, 3, 0, 0, 0 },
-                    { 32, true, "Correa", 0, 0, 3, 0, 0, 0 },
-                    { 33, true, "Felix", 0, 0, 3, 0, 0, 0 },
-                    { 34, true, "Bono", 0, 0, 4, 0, 0, 0 },
-                    { 35, true, "Navas", 0, 0, 4, 0, 0, 0 },
-                    { 36, true, "Koundé", 0, 0, 4, 0, 0, 0 },
-                    { 37, true, "Diego Carlos", 0, 0, 4, 0, 0, 0 },
-                    { 38, true, "Acuna", 0, 0, 4, 0, 0, 0 },
-                    { 39, true, "Fernando", 0, 0, 4, 0, 0, 0 }
+                    { 1, true, "Courtois", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 2, true, "Carvajal", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 3, true, "Militao", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 4, true, "Alaba", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 5, true, "Mendy", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 6, true, "Modric", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 7, true, "Casemiro", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 8, true, "Kroos", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 9, true, "Vinicius", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 10, true, "Benzema", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 11, true, "Rodrygo", 0, 0, 1, 0, 0, 0, 0, 0 },
+                    { 12, true, "Ter Stegen", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 13, true, "Dest", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 14, true, "Piqué", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 15, true, "Araujo", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 16, true, "Alba", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 17, true, "Busquets", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 18, true, "Pedri", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 19, true, "Gavi", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 20, true, "Lewandowski", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 21, true, "Ferran Torres", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 22, true, "Raphinha", 0, 0, 2, 0, 0, 0, 0, 0 },
+                    { 23, true, "Oblak", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 24, true, "Trippier", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 25, true, "Giménez", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 26, true, "Savic", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 27, true, "Reinildo", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 28, true, "Koke", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 29, true, "De Paul", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 30, true, "Saul", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 31, true, "Griezmann", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 32, true, "Correa", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 33, true, "Felix", 0, 0, 3, 0, 0, 0, 0, 0 },
+                    { 34, true, "Bono", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 35, true, "Navas", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 36, true, "Koundé", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 37, true, "Diego Carlos", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 38, true, "Acuna", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 39, true, "Fernando", 0, 0, 4, 0, 0, 0, 0, 0 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Players",
-                columns: new[] { "Id", "IsActive", "Name", "Position", "ShirtNumber", "TeamId", "TempAssists", "TempGoals", "TempMinutesPlayed" },
+                columns: new[] { "Id", "IsActive", "Name", "Position", "ShirtNumber", "TeamId", "TempAssists", "TempGoals", "TempMinutesPlayed", "TempRedCards", "TempYellowCards" },
                 values: new object[,]
                 {
-                    { 40, true, "Rakitic", 0, 0, 4, 0, 0, 0 },
-                    { 41, true, "Joan Jordán", 0, 0, 4, 0, 0, 0 },
-                    { 42, true, "En-Nesyri", 0, 0, 4, 0, 0, 0 },
-                    { 43, true, "Ocampos", 0, 0, 4, 0, 0, 0 },
-                    { 44, true, "Martínez", 0, 0, 4, 0, 0, 0 },
-                    { 45, true, "Cillessen", 0, 0, 5, 0, 0, 0 },
-                    { 46, true, "Gaya", 0, 0, 5, 0, 0, 0 },
-                    { 47, true, "Alderete", 0, 0, 5, 0, 0, 0 },
-                    { 48, true, "Diakhaby", 0, 0, 5, 0, 0, 0 },
-                    { 49, true, "Foulquier", 0, 0, 5, 0, 0, 0 },
-                    { 50, true, "Soler", 0, 0, 5, 0, 0, 0 },
-                    { 51, true, "Cáceres", 0, 0, 5, 0, 0, 0 },
-                    { 52, true, "Guedes", 0, 0, 5, 0, 0, 0 },
-                    { 53, true, "D. Almeida", 0, 0, 5, 0, 0, 0 },
-                    { 54, true, "Moreno", 0, 0, 5, 0, 0, 0 },
-                    { 55, true, "Cheryshev", 0, 0, 5, 0, 0, 0 }
+                    { 40, true, "Rakitic", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 41, true, "Joan Jordán", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 42, true, "En-Nesyri", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 43, true, "Ocampos", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 44, true, "Martínez", 0, 0, 4, 0, 0, 0, 0, 0 },
+                    { 45, true, "Cillessen", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 46, true, "Gaya", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 47, true, "Alderete", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 48, true, "Diakhaby", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 49, true, "Foulquier", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 50, true, "Soler", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 51, true, "Cáceres", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 52, true, "Guedes", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 53, true, "D. Almeida", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 54, true, "Moreno", 0, 0, 5, 0, 0, 0, 0, 0 },
+                    { 55, true, "Cheryshev", 0, 0, 5, 0, 0, 0, 0, 0 }
                 });
 
             migrationBuilder.InsertData(

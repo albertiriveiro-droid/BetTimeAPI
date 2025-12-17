@@ -49,6 +49,22 @@ public static class MarketResolver
                     TotalCornersSelection.Under => totalCorners <= cornerThreshold,
                     _ => throw new ArgumentOutOfRangeException()
                 };
+                case MarketType.BothToScore:
+                {
+                bool bothScored = match.HomeScore > 0 && match.AwayScore > 0;
+
+                 if (!Enum.TryParse<BothToScoreSelection>(selection.Name, out var bttsSel))
+                 throw new ArgumentException(
+                $"Invalid selection {selection.Name} for BothToScore market."
+                 );
+
+                 return bttsSel switch
+                {
+                 BothToScoreSelection.Yes => bothScored,
+                BothToScoreSelection.No => !bothScored,
+                _ => throw new ArgumentOutOfRangeException()
+                };
+                }
 
             default:
                 throw new NotImplementedException($"MarketType {selection.Market.MarketType} not implemented");

@@ -27,9 +27,15 @@ public class Player
     [JsonIgnore]
         public int TempGoals { get; set; }
         [JsonIgnore]
+        
         public int TempAssists { get; set; }
         [JsonIgnore]
         public int TempMinutesPlayed { get; set; }
+
+        [JsonIgnore]
+         public int TempYellowCards { get; set; }
+        [JsonIgnore] 
+        public int TempRedCards { get; set; }
 
     public ICollection<PlayerMatchStats> MatchStats { get; set; } = new List<PlayerMatchStats>();
 

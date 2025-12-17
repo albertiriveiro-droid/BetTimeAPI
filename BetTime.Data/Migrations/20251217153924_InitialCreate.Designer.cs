@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BetTime.Data.Migrations
 {
     [DbContext(typeof(BetTimeContext))]
-    [Migration("20251215003349_InitialCreate")]
+    [Migration("20251217153924_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -440,6 +440,12 @@ namespace BetTime.Data.Migrations
                     b.Property<int>("TempMinutesPlayed")
                         .HasColumnType("int");
 
+                    b.Property<int>("TempRedCards")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TempYellowCards")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("TeamId");
@@ -457,7 +463,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -469,7 +477,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -481,7 +491,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -493,7 +505,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -505,7 +519,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -517,7 +533,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -529,7 +547,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -541,7 +561,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -553,7 +575,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -565,7 +589,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -577,7 +603,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 1,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -589,7 +617,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -601,7 +631,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -613,7 +645,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -625,7 +659,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -637,7 +673,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -649,7 +687,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -661,7 +701,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -673,7 +715,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -685,7 +729,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -697,7 +743,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -709,7 +757,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 2,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -721,7 +771,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -733,7 +785,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -745,7 +799,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -757,7 +813,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -769,7 +827,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -781,7 +841,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -793,7 +855,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -805,7 +869,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -817,7 +883,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -829,7 +897,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -841,7 +911,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 3,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -853,7 +925,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -865,7 +939,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -877,7 +953,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -889,7 +967,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -901,7 +981,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -913,7 +995,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -925,7 +1009,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -937,7 +1023,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -949,7 +1037,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -961,7 +1051,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -973,7 +1065,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 4,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -985,7 +1079,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -997,7 +1093,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -1009,7 +1107,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -1021,7 +1121,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -1033,7 +1135,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -1045,7 +1149,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -1057,7 +1163,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -1069,7 +1177,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -1081,7 +1191,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -1093,7 +1205,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         },
                         new
                         {
@@ -1105,7 +1219,9 @@ namespace BetTime.Data.Migrations
                             TeamId = 5,
                             TempAssists = 0,
                             TempGoals = 0,
-                            TempMinutesPlayed = 0
+                            TempMinutesPlayed = 0,
+                            TempRedCards = 0,
+                            TempYellowCards = 0
                         });
                 });
 
@@ -1195,7 +1311,10 @@ namespace BetTime.Data.Migrations
                     b.Property<int>("PlayerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Shots")
+                    b.Property<int>("RedCard")
+                        .HasColumnType("int");
+
+                    b.Property<int>("YellowCard")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1385,7 +1504,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 1,
                             Amount = 50m,
-                            Date = new DateTime(2025, 12, 13, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5962),
+                            Date = new DateTime(2025, 12, 15, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7389),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -1394,7 +1513,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 2,
                             Amount = 25m,
-                            Date = new DateTime(2025, 12, 14, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5967),
+                            Date = new DateTime(2025, 12, 16, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7394),
                             PaymentMethod = "PayPal",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -1403,7 +1522,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 3,
                             Amount = 100m,
-                            Date = new DateTime(2025, 12, 12, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5969),
+                            Date = new DateTime(2025, 12, 14, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7395),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 2
@@ -1412,7 +1531,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 4,
                             Amount = 50m,
-                            Date = new DateTime(2025, 12, 14, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5970),
+                            Date = new DateTime(2025, 12, 16, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7397),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 2
@@ -1421,7 +1540,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 5,
                             Amount = 75m,
-                            Date = new DateTime(2025, 12, 13, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5971),
+                            Date = new DateTime(2025, 12, 15, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7398),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 3
@@ -1430,7 +1549,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 6,
                             Amount = 30m,
-                            Date = new DateTime(2025, 12, 14, 0, 33, 48, 724, DateTimeKind.Utc).AddTicks(5973),
+                            Date = new DateTime(2025, 12, 16, 15, 39, 24, 316, DateTimeKind.Utc).AddTicks(7399),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 3

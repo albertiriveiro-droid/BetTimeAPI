@@ -14,100 +14,100 @@ namespace BetTime.Business
         private readonly IMatchRepository _matchRepository;
         private readonly IPlayerRepository _playerRepository;
         private readonly IPlayerMarketSelectionService _playerMarketSelectionService;
+       private readonly IMarketSelectionRepository _marketSelectionRepository;
 
         public BetService(
             IBetRepository repository,
             IUserRepository userRepository,
             IMatchRepository matchRepository,
             IPlayerRepository playerRepository,
-            IPlayerMarketSelectionService playerMarketSelectionService)
+            IPlayerMarketSelectionService playerMarketSelectionService,
+            IMarketSelectionRepository marketSelectionRepository)
+
         {
             _repository = repository;
             _userRepository = userRepository;
             _matchRepository = matchRepository;
             _playerRepository = playerRepository;
             _playerMarketSelectionService = playerMarketSelectionService;
+            _marketSelectionRepository = marketSelectionRepository; 
         }
 
-        public Bet CreateBet(BetCreateDTO dto)
-        {
-            var user = _userRepository.GetUserById(dto.UserId)
-                       ?? throw new KeyNotFoundException($"User {dto.UserId} not found");
+      public Bet CreateBet(BetCreateDTO dto)
+{
+    var user = _userRepository.GetUserById(dto.UserId)
+               ?? throw new KeyNotFoundException($"User {dto.UserId} not found");
 
-            bool hasMarketSelection = dto.MarketSelectionId.HasValue;
-            bool hasPlayerSelection = dto.PlayerMarketSelectionId.HasValue;
+    bool hasMarketSelection = dto.MarketSelectionId.HasValue;
+    bool hasPlayerSelection = dto.PlayerMarketSelectionId.HasValue;
 
-            if (hasMarketSelection && hasPlayerSelection)
-                throw new InvalidOperationException("Cannot bet on both market and player at the same time.");
-            if (!hasMarketSelection && !hasPlayerSelection)
-                throw new InvalidOperationException("Must bet on market or player.");
+    if (hasMarketSelection && hasPlayerSelection)
+        throw new InvalidOperationException("Cannot bet on both market and player at the same time.");
+    if (!hasMarketSelection && !hasPlayerSelection)
+        throw new InvalidOperationException("Must bet on market or player.");
 
-            int matchId;
-            int? marketSelectionId = null;
-            int? playerMarketSelectionId = null;
-            decimal odd = 1m;
+    int matchId;
+    int? marketSelectionId = null;
+    int? playerMarketSelectionId = null;
+    decimal odd = 1m;
 
-            if (hasMarketSelection)
-            {
-                var selection = _matchRepository
-                    .GetAllMatches()
-                    .SelectMany(m => m.Markets)
-                    .SelectMany(m => m.Selections)
-                    .FirstOrDefault(s => s.Id == dto.MarketSelectionId)
-                    ?? throw new KeyNotFoundException("Market selection not found");
+    if (hasMarketSelection)
+    {
+      
+        var selection = _marketSelectionRepository.GetSelectionById(dto.MarketSelectionId.Value)
+                        ?? throw new KeyNotFoundException("Market selection not found");
 
-                marketSelectionId = selection.Id;
-                matchId = selection.Market?.MatchId ?? throw new KeyNotFoundException("Associated match not found");
-                odd = selection.Odd;
+        marketSelectionId = selection.Id;
+        matchId = selection.Market.MatchId; 
+        odd = selection.Odd;
 
-                var match = _matchRepository.GetMatchById(matchId);
-                if (match == null) throw new KeyNotFoundException("Match not found");
-                if (match.Finished) throw new InvalidOperationException("Cannot bet on finished match");
-                if (match.StartTime <= DateTime.UtcNow) throw new InvalidOperationException("Cannot bet after match start");
-            }
-            else
-            {
-              var selection = _playerMarketSelectionService.GetPlayerSelectionById(dto.PlayerMarketSelectionId!.Value)
-                   ?? throw new KeyNotFoundException("Player market selection not found");
-                   
-                playerMarketSelectionId = selection.Id;
-                matchId = selection.PlayerMarket.MatchId;
-                odd = selection.Odd;
+        
+        var match = _matchRepository.GetMatchWithMarketsAndSelections(matchId);
 
-                var match = _matchRepository.GetMatchById(matchId)
-                            ?? throw new KeyNotFoundException("Associated match not found");
+        if (match.Finished) throw new InvalidOperationException("Cannot bet on finished match");
+        if (match.StartTime <= DateTime.UtcNow) throw new InvalidOperationException("Cannot bet after match start");
+    }
+    else
+    {
+        var selection = _playerMarketSelectionService.GetPlayerSelectionById(dto.PlayerMarketSelectionId.Value)
+                        ?? throw new KeyNotFoundException("Player market selection not found");
 
-                if (match.Finished) throw new InvalidOperationException("Cannot bet on finished match");
-                if (match.StartTime <= DateTime.UtcNow) throw new InvalidOperationException("Cannot bet after match start");
-            }
+        playerMarketSelectionId = selection.Id;
+        matchId = selection.PlayerMarket.MatchId;
+        odd = selection.Odd;
 
-            if (dto.Amount <= 0) throw new ArgumentException("Amount must be greater than 0");
-            if (user.Balance < dto.Amount) throw new InvalidOperationException("Insufficient balance");
+        var match = _matchRepository.GetMatchWithMarketsAndSelections(matchId);
 
-            user.Balance -= dto.Amount;
-            _userRepository.UpdateUser(user);
+        if (match.Finished) throw new InvalidOperationException("Cannot bet on finished match");
+        if (match.StartTime <= DateTime.UtcNow) throw new InvalidOperationException("Cannot bet after match start");
+    }
 
-            var bet = new Bet
-            {
-                UserId = user.Id,
-                MatchId = matchId,
-                MarketSelectionId = marketSelectionId,
-                PlayerMarketSelectionId = playerMarketSelectionId,
-                Amount = dto.Amount,
-                PlacedAt = DateTime.UtcNow
-            };
+    if (dto.Amount <= 0) throw new ArgumentException("Amount must be greater than 0");
+    if (user.Balance < dto.Amount) throw new InvalidOperationException("Insufficient balance");
 
-            _repository.AddBet(bet);
-            return bet;
-        }
+    user.Balance -= dto.Amount;
+    _userRepository.UpdateUser(user);
 
-    public Bet ResolveBet(int betId)
+    var bet = new Bet
+    {
+        UserId = user.Id,
+        MatchId = matchId,
+        MarketSelectionId = marketSelectionId,
+        PlayerMarketSelectionId = playerMarketSelectionId,
+        Amount = dto.Amount,
+        PlacedAt = DateTime.UtcNow
+    };
+
+    _repository.AddBet(bet);
+    return bet;
+}
+
+public Bet ResolveBet(int betId)
 {
     var bet = _repository.GetBetById(betId)
               ?? throw new KeyNotFoundException("Bet not found");
 
-   
-    var match = _matchRepository.GetMatchById(bet.MatchId)
+    var match = _matchRepository.GetMatchWithMarketsAndSelections(bet.MatchId)
                 ?? throw new KeyNotFoundException("Match not found");
 
     if (!match.Finished)
@@ -115,19 +115,23 @@ namespace BetTime.Business
 
     decimal odd;
 
-    if (bet.MarketSelection != null)
+    if (bet.MarketSelectionId.HasValue)
     {
-        bet.Won = MarketResolver.Resolve(match, bet.MarketSelection);
-        odd = bet.MarketSelection.Odd;
+        var selection = match.Markets
+            .SelectMany(m => m.Selections)
+            .FirstOrDefault(s => s.Id == bet.MarketSelectionId)
+            ?? throw new KeyNotFoundException("Market selection not found");
+
+        bet.Won = MarketResolver.Resolve(match, selection);
+        odd = selection.Odd;
     }
-    else if (bet.PlayerMarketSelection != null)
+    else if (bet.PlayerMarketSelectionId.HasValue)
     {
-        bet.Won = PlayerMarketResolver.Resolve(
-            match,
-            bet.PlayerMarketSelection,
-            _playerRepository
-        );
-        odd = bet.PlayerMarketSelection.Odd;
+        var selection = _playerMarketSelectionService.GetPlayerSelectionById(bet.PlayerMarketSelectionId.Value)
+                        ?? throw new KeyNotFoundException("Player market selection not found");
+
+        bet.Won = PlayerMarketResolver.Resolve(match, selection, _playerRepository);
+        odd = selection.Odd;
     }
     else
     {
@@ -146,6 +150,8 @@ namespace BetTime.Business
     _repository.UpdateBet(bet);
     return bet;
 }
+
+
 public void ResolveBetsForMatch(int matchId)
 {
     var match = _matchRepository.GetMatchById(matchId)
