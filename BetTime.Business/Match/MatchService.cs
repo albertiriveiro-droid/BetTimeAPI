@@ -10,6 +10,7 @@ public class MatchService : IMatchService
     private readonly ILeagueRepository _leagueRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly IPlayerRepository _playerRepository;
+    private readonly IMarketService _marketService;
     private readonly IPlayerMatchStatsService _playerMatchStatsService;
     private readonly IPlayerMarketService _playerMarketService;
 
@@ -18,6 +19,7 @@ public class MatchService : IMatchService
         ILeagueRepository leagueRepository,
         ITeamRepository teamRepository,
         IPlayerRepository playerRepository,
+         IMarketService marketService,
         IPlayerMatchStatsService playerMatchStatsService,
         IPlayerMarketService playerMarketService)
     {
@@ -27,6 +29,7 @@ public class MatchService : IMatchService
         _playerRepository = playerRepository;
         _playerMatchStatsService = playerMatchStatsService;
         _playerMarketService = playerMarketService;
+        _marketService= marketService;
     }
 
     public Match CreateMatch(MatchCreateDTO matchCreateDTO)
@@ -53,7 +56,7 @@ public class MatchService : IMatchService
 
         _repository.AddMatch(match);
 
-        // Crear stats y mercados de jugadores
+      
         var homePlayers = _playerRepository.GetPlayerByTeam(match.HomeTeamId)
                                            .Where(p => p.IsActive).ToList();
         var awayPlayers = _playerRepository.GetPlayerByTeam(match.AwayTeamId)
@@ -75,13 +78,47 @@ public class MatchService : IMatchService
                 MatchId = match.Id,
                 Goals = 0,
                 Assists = 0,
+                YellowCards=0,
+                RedCards=0,
                 MinutesPlayed = 0
             });
 
            
             
         }
+    var matchMarkets = new List<MarketCreateDTO>
+{
+    new MarketCreateDTO { MarketType = MarketType.OneXTwo, Description = "Resultado final" },
+    new MarketCreateDTO { MarketType = MarketType.OverUnderGoals, Description = "Más/Menos de 2.5 goles" },
+    new MarketCreateDTO { MarketType = MarketType.TotalCorners, Description = "Más/Menos de córners" },
+    new MarketCreateDTO { MarketType = MarketType.BothToScore, Description = "Ambos equipos marcan" }
+};
 
+    foreach (var dto in matchMarkets)
+    {
+    _marketService.CreateMarket(match.Id, dto); 
+    }
+
+   
+    var playerMarketTypes = new[]
+{
+    PlayerMarketType.Goal,
+    PlayerMarketType.Assist,
+    PlayerMarketType.YellowCard,
+    PlayerMarketType.RedCard
+    };
+
+    foreach (var player in homePlayers.Concat(awayPlayers))
+    {
+    foreach (var type in playerMarketTypes)
+    {
+        _playerMarketService.CreatePlayerMarket(match.Id, new PlayerMarketCreateDTO
+        {
+            PlayerId = player.Id,
+            PlayerMarketType = type
+        });
+    }
+}
         return match;
     }
 

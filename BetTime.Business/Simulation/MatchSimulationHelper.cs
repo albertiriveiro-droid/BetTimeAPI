@@ -56,10 +56,17 @@ namespace BetTime.Business
                     if (assister != null) assister.TempAssists += 1;
                 }
 
-                // Todos los jugadores juegan los minutos del partido
+             
                 foreach (var p in players)
                 {
-                    p.TempMinutesPlayed = durationMinutes;
+                    
+                 if (rnd.NextDouble() < 0.20)
+                p.TempYellowCards += 1;
+
+       
+                if (rnd.NextDouble() < 0.02)
+                p.TempRedCards += 1;
+                p.TempMinutesPlayed = durationMinutes;
                 }
             }
 

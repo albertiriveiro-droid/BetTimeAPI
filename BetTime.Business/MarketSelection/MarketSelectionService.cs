@@ -41,6 +41,10 @@ public class MarketSelectionService : IMarketSelectionService
             if (!Enum.IsDefined(typeof(TotalCornersSelection), dto.Name))
                 throw new InvalidOperationException("Invalid selection for Total Corners market");
             break;
+        case MarketType.BothToScore:
+            if (!Enum.IsDefined(typeof(BothToScoreSelection), dto.Name))
+                throw new InvalidOperationException("Invalid selection for BothToScore market");
+            break;
 
         default:
             throw new NotImplementedException("Market type not supported");

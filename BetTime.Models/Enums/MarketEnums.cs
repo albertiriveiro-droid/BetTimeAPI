@@ -4,6 +4,7 @@ namespace BetTime.Models
     {
         OneXTwo,
         OverUnderGoals,
-        TotalCorners
+        TotalCorners,
+        BothToScore
     }
 }

@@ -19,6 +19,8 @@ namespace BetTime.Services
             {
                 Goals = playerStatsDto.Goals,
                 Assists = playerStatsDto.Assists,
+                YellowCard= playerStatsDto.YellowCards,
+                RedCard= playerStatsDto.RedCards,
                 MinutesPlayed = playerStatsDto.MinutesPlayed
             };
             _playerMatchStatsRepository.AddPlayerMatchStats(playerStats);
@@ -38,6 +40,9 @@ namespace BetTime.Services
 
             if (playerStatsUpdateDto.Goals.HasValue) playerStats.Goals = playerStatsUpdateDto.Goals.Value;
             if (playerStatsUpdateDto.Assists.HasValue) playerStats.Assists = playerStatsUpdateDto.Assists.Value;
+            if (playerStatsUpdateDto.YellowCards.HasValue) playerStats.YellowCard = playerStatsUpdateDto.YellowCards.Value;
+
+            if (playerStatsUpdateDto.RedCards.HasValue) playerStats.RedCard = playerStatsUpdateDto.RedCards.Value;
             if (playerStatsUpdateDto.MinutesPlayed.HasValue) playerStats.MinutesPlayed = playerStatsUpdateDto.MinutesPlayed.Value;
 
             _playerMatchStatsRepository.UpdatePlayerMatchStats(playerStats);

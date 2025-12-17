@@ -20,7 +20,10 @@ public class PlayerMatchStats
 
     public int Goals { get; set; }
     public int Assists { get; set; }
-    public int Shots { get; set; }
+
+     public int YellowCard { get; set; }
+    public int RedCard { get; set; }
+    
     public int MinutesPlayed { get; set; }
 
     public PlayerMatchStats() { }
