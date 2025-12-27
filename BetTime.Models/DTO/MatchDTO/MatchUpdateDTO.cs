@@ -8,7 +8,6 @@ namespace BetTime.Models
 
         public bool? Finished { get; set; }
 
-        // NEW → Live simulation controls
         public int? DurationMinutes { get; set; }
 
     }
