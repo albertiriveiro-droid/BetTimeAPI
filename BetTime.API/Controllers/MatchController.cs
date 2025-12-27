@@ -18,105 +18,105 @@ public class MatchController : ControllerBase
         _matchService = matchService;
     }
 
-    // GET: Todos los partidos
     [HttpGet]
-    public ActionResult<IEnumerable<Match>> GetAllMatches()
+    public ActionResult<IEnumerable<MatchOutputDTO>> GetAllMatches()
+{
+    try
     {
-        try
-        {
-            var matches = _matchService.GetAllMatches();
-            return Ok(matches);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
+        var matches = _matchService.GetAllMatches();
+        return Ok(matches);
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex.Message);
+        return BadRequest(ex.Message);
+    }
+}
 
     
-    [HttpGet("{matchId}", Name = "GetMatchById")]
-    public IActionResult GetMatchById(int matchId)
+    [HttpGet("{matchId}")]
+    public ActionResult<MatchOutputDTO> GetMatchById(int matchId)
     {
-        try
-        {
-            var match = _matchService.GetMatchById(matchId);
-            return Ok(match);
-        }
-        catch (KeyNotFoundException knfex)
-        {
-            _logger.LogWarning(knfex.Message);
-            return NotFound(knfex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
+    try
+    {
+        var match = _matchService.GetMatchById(matchId);
+        return Ok(match);
     }
+    catch (KeyNotFoundException knfex)
+    {
+        _logger.LogWarning(knfex.Message);
+        return NotFound(knfex.Message);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex.Message);
+        return BadRequest(ex.Message);
+    }
+}
+    
+[HttpGet("byLeague/{leagueId}", Name = "GetMatchesByLeague")]
+public IActionResult GetMatchesByLeague(int leagueId)
+{
+    try
+    {
+        var matches = _matchService.GetMatchesByLeague(leagueId);
+        return Ok(matches);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex.Message);
+        return BadRequest(ex.Message);
+    }
+}
+
 
     
-    [HttpGet("byLeague/{leagueId}", Name = "GetMatchesByLeague")]
-    public IActionResult GetMatchesByLeague(int leagueId)
+[HttpGet("byTeam/{teamId}", Name = "GetMatchesByTeam")]
+public IActionResult GetMatchesByTeam(int teamId)
+{
+    try
     {
-        try
-        {
-            var matches = _matchService.GetMatchesByLeague(leagueId);
-            return Ok(matches);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
+        var matches = _matchService.GetMatchesByTeam(teamId);
+        return Ok(matches); 
     }
-
-    
-    [HttpGet("byTeam/{teamId}", Name = "GetMatchesByTeam")]
-    public IActionResult GetMatchesByTeam(int teamId)
+    catch (Exception ex)
     {
-        try
-        {
-            var matches = _matchService.GetMatchesByTeam(teamId);
-            return Ok(matches);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
+        _logger.LogError(ex.Message);
+        return BadRequest(ex.Message);
     }
+}
 
-    
-    [Authorize(Roles = Roles.Admin)]
-    [HttpPost]
-    public IActionResult CreateMatch([FromBody] MatchCreateDTO matchCreateDTO)
+[Authorize(Roles = Roles.Admin)]
+[HttpPost]
+public IActionResult CreateMatch([FromBody] MatchCreateDTO matchCreateDTO)
+{
+    if (!ModelState.IsValid) 
+        return BadRequest(ModelState);
+
+    try
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var match = _matchService.CreateMatch(matchCreateDTO);
 
-        try
+        
+        return Ok(new 
         {
-            var match = _matchService.CreateMatch(matchCreateDTO);
-            return CreatedAtRoute("GetMatchById", new { matchId = match.Id }, match);
-        }
-        catch (KeyNotFoundException knfex)
-        {
-            _logger.LogWarning(knfex.Message);
-            return NotFound(knfex.Message);
-        }
-        catch (ArgumentException aex)
-        {
-            _logger.LogWarning(aex.Message);
-            return BadRequest(aex.Message);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message);
-            return BadRequest(ex.Message);
-        }
+            Message = "Match created successfully",
+            MatchId = match.Id,
+            LeagueId = match.LeagueId,
+            HomeTeamId = match.HomeTeamId,
+            AwayTeamId = match.AwayTeamId,
+            StartTime = match.StartTime,
+            DurationMinutes = match.DurationMinutes
+        });
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error creating match");
+        return StatusCode(500, "Internal server error creating match");
+    }
+}
 
-    
+
     [Authorize(Roles = Roles.Admin)]
     [HttpPut("{matchId}")]
     public IActionResult UpdateMatch(int matchId, [FromBody] MatchUpdateDTO matchUpdateDTO)

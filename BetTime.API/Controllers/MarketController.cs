@@ -59,6 +59,36 @@ namespace BetTime.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("match/{matchId}/onextwo")]
+        public IActionResult GetOneXTwoMarketsByMatch(int matchId)
+        {
+        try
+        {
+       
+        var markets = _marketService.GetMarketsByMatch(matchId)
+            .Where(m => m.MarketType == MarketType.OneXTwo)
+            .Select(m => new
+            {
+                m.Id,
+                m.MarketType,
+                Selections = m.Selections.Select(s => new
+                {
+                    s.Id,
+                    s.Name,
+                    s.Odd
+                }).ToList()
+            })
+            .ToList();
+
+        return Ok(markets);
+        }
+        catch (Exception ex)
+        {
+        _logger.LogError(ex.Message);
+        return BadRequest(ex.Message);
+        }
+}
+        
 
        
         [Authorize(Roles = Roles.Admin)]
@@ -84,7 +114,11 @@ namespace BetTime.API.Controllers
             }
         }
 
+        
+
        
 }
+
+
 
 }

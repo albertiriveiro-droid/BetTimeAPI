@@ -122,21 +122,24 @@ public class MatchService : IMatchService
         return match;
     }
 
-    public IEnumerable<Match> GetAllMatches() => _repository.GetAllMatches();
+    public IEnumerable<MatchOutputDTO> GetAllMatches() =>
+    _repository.GetAllMatches().Select(MapToDTO);
 
-    public Match GetMatchById(int matchId)
+    public MatchOutputDTO GetMatchById(int matchId)
     {
-        var match = _repository.GetMatchById(matchId);
-        if (match == null)
-            throw new KeyNotFoundException($"Match with ID {matchId} not found");
-        return match;
-    }
+    var match = _repository.GetMatchById(matchId);
+    if (match == null)
+        throw new KeyNotFoundException($"Match with ID {matchId} not found");
 
-    public IEnumerable<Match> GetMatchesByLeague(int leagueId) =>
-        _repository.GetMatchesByLeague(leagueId);
+    return MapToDTO(match);
+}
 
-    public IEnumerable<Match> GetMatchesByTeam(int teamId) =>
-        _repository.GetMatchesByTeam(teamId);
+    public IEnumerable<MatchOutputDTO> GetMatchesByLeague(int leagueId) =>
+    _repository.GetMatchesByLeague(leagueId).Select(MapToDTO);
+
+
+    public IEnumerable<MatchOutputDTO> GetMatchesByTeam(int teamId) =>
+    _repository.GetMatchesByTeam(teamId).Select(MapToDTO);
 
     public void UpdateMatch(int matchId, MatchUpdateDTO dto)
     {
@@ -173,4 +176,37 @@ public class MatchService : IMatchService
 
         _repository.DeleteMatch(match);
     }
+
+    private MatchOutputDTO MapToDTO(Match match)
+{
+    return new MatchOutputDTO
+    {
+        Id = match.Id,
+        LeagueId = match.LeagueId,
+        LeagueName = match.League?.Name ?? "",
+        HomeTeamId = match.HomeTeamId,
+        HomeTeamName = match.HomeTeam?.Name ?? "",
+        AwayTeamId = match.AwayTeamId,
+        AwayTeamName = match.AwayTeam?.Name ?? "",
+        StartTime = match.StartTime,
+        HomeScore = match.HomeScore,
+        AwayScore = match.AwayScore,
+        HomeCorners = match.HomeCorners,
+        AwayCorners = match.AwayCorners,
+        DurationMinutes = match.DurationMinutes,
+        Finished = match.Finished,
+        PlayerStats = match.PlayerMatchStats.Select(p => new PlayerMatchStatsDTO
+        {
+            PlayerId = p.PlayerId,
+            MatchId = p.MatchId,
+            Goals = p.Goals,
+            Assists = p.Assists,
+            YellowCards = p.YellowCard,   
+            RedCards = p.RedCard,         
+            MinutesPlayed = p.MinutesPlayed
+        }).ToList()
+
+    };
+}
+
 }
