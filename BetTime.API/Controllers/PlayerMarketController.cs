@@ -68,4 +68,11 @@ public class PlayerMarketController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("bymatch/details/{matchId}")]
+    public IActionResult GetPlayerMarketsByMatchDetails(int matchId)
+    {
+    var markets = _service.GetPlayerMarketsWithPlayerByMatch(matchId);
+    return Ok(markets);
+}
 }

@@ -8,5 +8,6 @@ namespace BetTime.Services
         PlayerMarket CreatePlayerMarket(int matchId, PlayerMarketCreateDTO playerMarketCreateDTO);
         PlayerMarket? GetPlayerMarketById(int id);
         IEnumerable<PlayerMarket> GetPlayerMarketsByMatch(int matchId);
+        IEnumerable<PlayerMarketOutputDTO> GetPlayerMarketsWithPlayerByMatch(int matchId);
     }
 }

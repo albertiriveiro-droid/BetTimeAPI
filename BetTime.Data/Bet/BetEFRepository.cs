@@ -84,7 +84,7 @@ public class BetEFRepository : IBetRepository
         .Include(b => b.User)
 
         .Include(b => b.MarketSelection)
-            .ThenInclude(ms => ms.Market)   // 🔥 CLAVE
+            .ThenInclude(ms => ms.Market)   
 
         .Include(b => b.PlayerMarketSelection)
             .ThenInclude(pms => pms.PlayerMarket)

@@ -6,5 +6,6 @@
         void AddPlayerMarket(PlayerMarket market);
         PlayerMarket? GetPlayerMarketById(int id);
         IEnumerable<PlayerMarket> GetPlayerMarketsByMatch(int matchId);
+        IEnumerable<PlayerMarketOutputDTO> GetPlayerMarketsByMatchWithPlayer(int matchId);
         void SaveChanges();
     }

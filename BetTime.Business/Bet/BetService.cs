@@ -173,7 +173,10 @@ public void ResolveBetsForMatch(int matchId)
                                                ?? throw new KeyNotFoundException("Bet not found");
 
         public IEnumerable<Bet> GetAllBets() => _repository.GetAllBets();
-        public IEnumerable<Bet> GetBetsByUser(int userId) => _repository.GetBetsByUser(userId);
+       public IEnumerable<BetOutputDTO> GetBetsByUser(int userId)
+        {
+         return _repository.GetBetsByUser(userId).Select(MapToDTO);
+        }
         public IEnumerable<Bet> GetBetsByMatch(int matchId) => _repository.GetBetsByMatch(matchId);
 
         public IEnumerable<BetOutputDTO> GetWonBets(int userId) =>
@@ -182,8 +185,20 @@ public void ResolveBetsForMatch(int matchId)
         public IEnumerable<BetOutputDTO> GetLostBets(int userId) =>
             _repository.GetLostBets(userId).Select(MapToDTO);
 
-        public IEnumerable<Bet> GetActiveBets() => _repository.GetActiveBets();
-        public IEnumerable<Bet> GetFinishedBets() => _repository.GetFinishedBets();
+        public IEnumerable<BetOutputDTO> GetActiveBets(int userId)
+        {
+        return _repository
+        .GetBetsByUser(userId)
+        .Where(b => !b.Won.HasValue)
+        .Select(MapToDTO);
+        }
+        public IEnumerable<BetOutputDTO> GetFinishedBets(int userId)
+        {
+        return _repository
+        .GetBetsByUser(userId)
+        .Where(b => b.Won.HasValue)
+        .Select(MapToDTO);
+        }
 
         private BetOutputDTO MapToDTO(Bet bet)
         {
