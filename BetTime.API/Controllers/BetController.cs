@@ -238,18 +238,11 @@ public IActionResult ResolveBetsForMatch(int matchId)
 [HttpGet("active/{userId}")]
 public IActionResult GetActiveBets(int userId)
 {
-    if (!_authService.HasAccessToResource(userId, HttpContext.User)) return Forbid();
+    if (!_authService.HasAccessToResource(userId, HttpContext.User))
+        return Forbid();
 
-    try
-    {
-        var bets = _betService.GetBetsByUser(userId).Where(b => !b.Won.HasValue);
-        return Ok(bets);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex.Message);
-        return BadRequest(ex.Message);
-    }
+    var bets = _betService.GetActiveBets(userId);
+    return Ok(bets);
 }
 
 
@@ -257,17 +250,10 @@ public IActionResult GetActiveBets(int userId)
 [HttpGet("finished/{userId}")]
 public IActionResult GetFinishedBets(int userId)
 {
-    if (!_authService.HasAccessToResource(userId, HttpContext.User)) return Forbid();
+    if (!_authService.HasAccessToResource(userId, HttpContext.User))
+        return Forbid();
 
-    try
-    {
-        var bets = _betService.GetBetsByUser(userId).Where(b => b.Won.HasValue);
-        return Ok(bets);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex.Message);
-        return BadRequest(ex.Message);
-    }
+    var bets = _betService.GetFinishedBets(userId);
+    return Ok(bets);
 }
 }

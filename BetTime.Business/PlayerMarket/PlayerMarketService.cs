@@ -70,5 +70,10 @@ namespace BetTime.Services
 
             return markets;
         }
+
+        public IEnumerable<PlayerMarketOutputDTO> GetPlayerMarketsWithPlayerByMatch(int matchId)
+        {
+        return _repository.GetPlayerMarketsByMatchWithPlayer(matchId);
+        }
     }
 }

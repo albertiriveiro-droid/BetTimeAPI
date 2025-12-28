@@ -34,6 +34,33 @@ namespace BetTime.Data
                 .Include(pm => pm.Selections)
                 .ToList();
         }
+        public IEnumerable<PlayerMarketOutputDTO> GetPlayerMarketsByMatchWithPlayer(int matchId)
+        {
+         return _context.PlayerMarkets
+        .Where(pm => pm.MatchId == matchId)
+        .Include(pm => pm.Selections)
+        .Include(pm => pm.Player) 
+        .ThenInclude(p => p.Team) 
+        .Select(pm => new PlayerMarketOutputDTO
+        {
+            Id = pm.Id,
+            PlayerId = pm.PlayerId,
+            PlayerName = pm.Player.Name,
+            TeamName = pm.Player.Team.Name, 
+            MatchId = pm.MatchId,
+            PlayerMarketType = pm.PlayerMarketType,
+            IsOpen = pm.IsOpen,
+            Selections = pm.Selections.Select(s => new PlayerMarketSelectionOutputDTO
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Odd = s.Odd,
+                Threshold = s.Threshold
+            }).ToList()
+        })
+        .ToList();
+}
+
         public void SaveChanges()
         {
             _context.SaveChanges();

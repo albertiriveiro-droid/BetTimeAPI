@@ -6,11 +6,11 @@ public interface IBetService
     Bet GetBetById(int betId);
 
     IEnumerable<Bet> GetAllBets();
-    IEnumerable<Bet> GetBetsByUser(int userId);
+    IEnumerable<BetOutputDTO> GetBetsByUser(int userId);
     IEnumerable<Bet> GetBetsByMatch(int matchId);
 
-    IEnumerable<Bet> GetActiveBets();
-    IEnumerable<Bet> GetFinishedBets();
+    IEnumerable<BetOutputDTO> GetActiveBets(int userId);
+    IEnumerable<BetOutputDTO> GetFinishedBets(int userId);
     IEnumerable<BetOutputDTO> GetWonBets(int userId);
     IEnumerable<BetOutputDTO> GetLostBets(int userId);
 

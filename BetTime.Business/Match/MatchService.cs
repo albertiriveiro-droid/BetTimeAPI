@@ -34,6 +34,8 @@ public class MatchService : IMatchService
 
     public Match CreateMatch(MatchCreateDTO matchCreateDTO)
     {
+        if (matchCreateDTO.StartTime <= DateTime.UtcNow)
+        throw new InvalidOperationException("No se pueden crear partidos en el pasado.");
         if (matchCreateDTO.HomeTeamId == matchCreateDTO.AwayTeamId)
             throw new ArgumentException("A match cannot have the same team as home and away.");   
         
