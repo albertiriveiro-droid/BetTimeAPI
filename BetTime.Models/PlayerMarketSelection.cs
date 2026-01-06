@@ -16,7 +16,7 @@ namespace BetTime.Models
         
         public PlayerMarketSelection() { }
 
-        // Constructor normal
+       
         public PlayerMarketSelection(int playerMarketId, string name, decimal odd, decimal? threshold = null)
         {
             PlayerMarketId = playerMarketId;
