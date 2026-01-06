@@ -3,7 +3,7 @@ using BetTime.Models;
 using System;
 using System.Collections.Generic;
 
-namespace BetTime.Services
+namespace BetTime.Business
 {
     public class PlayerMarketService : IPlayerMarketService
     {

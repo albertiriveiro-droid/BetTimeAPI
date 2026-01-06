@@ -1,7 +1,7 @@
 using BetTime.Models;
 using System.Collections.Generic;
 
-namespace BetTime.Services
+namespace BetTime.Business
 {
     public interface IPlayerMarketService
     {

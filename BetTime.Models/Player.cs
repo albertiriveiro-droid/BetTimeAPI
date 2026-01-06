@@ -41,7 +41,7 @@ public class Player
 
     public ICollection<PlayerMarket> PlayerMarkets { get; set; } = new List<PlayerMarket>();
 
-    // Relación con PlayerMatchStats
+   
 
     public Player() { }
 
