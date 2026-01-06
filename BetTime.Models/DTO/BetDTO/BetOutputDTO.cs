@@ -20,5 +20,6 @@ namespace BetTime.Models
         public bool? Won { get; set; }
         public decimal? AmountWon { get; set; }
         public DateTime Date { get; set; }
+        public decimal? Threshold { get; set; }
     }
 }

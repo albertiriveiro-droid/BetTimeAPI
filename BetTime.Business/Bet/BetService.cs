@@ -204,6 +204,7 @@ public void ResolveBetsForMatch(int matchId)
         {
             string? playerName = null;
             string? playerMarketType = null;
+            decimal? threshold = null;
 
             if (bet.PlayerMarketSelectionId.HasValue)
             {
@@ -224,6 +225,7 @@ public void ResolveBetsForMatch(int matchId)
             {
                 marketType = bet.MarketSelection.Market?.MarketType.ToString();
                 selectionName = bet.MarketSelection.Name;
+                threshold = bet.MarketSelection.Threshold;
             }
 
             decimal odds = bet.MarketSelection?.Odd ??
@@ -240,6 +242,7 @@ public void ResolveBetsForMatch(int matchId)
                 SelectionName = selectionName,
                 PlayerName = playerName,
                 PlayerMarketType = playerMarketType,
+                Threshold = threshold,
                 AmountBet = bet.Amount,
                 Odds = odds,
                 Won = bet.Won,
