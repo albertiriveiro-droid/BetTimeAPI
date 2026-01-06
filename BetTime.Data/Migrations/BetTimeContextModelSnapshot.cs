@@ -8654,7 +8654,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 1,
                             Amount = 50m,
-                            Date = new DateTime(2025, 12, 29, 20, 5, 4, 667, DateTimeKind.Utc).AddTicks(2356),
+                            Date = new DateTime(2026, 1, 4, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3433),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -8663,7 +8663,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 2,
                             Amount = 25m,
-                            Date = new DateTime(2025, 12, 30, 20, 5, 4, 667, DateTimeKind.Utc).AddTicks(2363),
+                            Date = new DateTime(2026, 1, 5, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3439),
                             PaymentMethod = "PayPal",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -8672,7 +8672,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 3,
                             Amount = 100m,
-                            Date = new DateTime(2025, 12, 28, 20, 5, 4, 667, DateTimeKind.Utc).AddTicks(2365),
+                            Date = new DateTime(2026, 1, 3, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3440),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 2
@@ -8681,7 +8681,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 4,
                             Amount = 50m,
-                            Date = new DateTime(2025, 12, 30, 20, 5, 4, 667, DateTimeKind.Utc).AddTicks(2366),
+                            Date = new DateTime(2026, 1, 5, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3442),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 2
@@ -8690,7 +8690,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 5,
                             Amount = 75m,
-                            Date = new DateTime(2025, 12, 29, 20, 5, 4, 667, DateTimeKind.Utc).AddTicks(2367),
+                            Date = new DateTime(2026, 1, 4, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3443),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 3
@@ -8699,7 +8699,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 6,
                             Amount = 30m,
-                            Date = new DateTime(2025, 12, 30, 20, 5, 4, 667, DateTimeKind.Utc).AddTicks(2368),
+                            Date = new DateTime(2026, 1, 5, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3447),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 3

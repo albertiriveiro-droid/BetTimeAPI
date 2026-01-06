@@ -13,6 +13,9 @@ public class MatchService : IMatchService
     private readonly IMarketService _marketService;
     private readonly IPlayerMatchStatsService _playerMatchStatsService;
     private readonly IPlayerMarketService _playerMarketService;
+    private readonly IMarketGeneratorService _marketGenerator;
+    private readonly IPlayerMarketGeneratorService _playerMarketGenerator;
+    
 
     public MatchService(
         IMatchRepository matchRepository,
@@ -21,7 +24,9 @@ public class MatchService : IMatchService
         IPlayerRepository playerRepository,
          IMarketService marketService,
         IPlayerMatchStatsService playerMatchStatsService,
-        IPlayerMarketService playerMarketService)
+        IPlayerMarketService playerMarketService,
+        IMarketGeneratorService marketGenerator,
+        IPlayerMarketGeneratorService playerMarketGenerator)
     {
         _repository = matchRepository;
         _leagueRepository = leagueRepository;
@@ -30,24 +35,43 @@ public class MatchService : IMatchService
         _playerMatchStatsService = playerMatchStatsService;
         _playerMarketService = playerMarketService;
         _marketService= marketService;
+        _marketGenerator = marketGenerator;
+        _playerMarketGenerator = playerMarketGenerator;
     }
 
-    public Match CreateMatch(MatchCreateDTO matchCreateDTO)
+   public Match CreateMatch(MatchCreateDTO matchCreateDTO)
+{
+    try
     {
-        if (matchCreateDTO.StartTime <= DateTime.UtcNow)
-        throw new InvalidOperationException("No se pueden crear partidos en el pasado.");
-        if (matchCreateDTO.HomeTeamId == matchCreateDTO.AwayTeamId)
-            throw new ArgumentException("A match cannot have the same team as home and away.");   
         
-        if (_leagueRepository.GetLeagueById(matchCreateDTO.LeagueId) == null)
-            throw new KeyNotFoundException($"League with ID {matchCreateDTO.LeagueId} not found");
+        if (matchCreateDTO.StartTime <= DateTime.UtcNow)
+            throw new InvalidOperationException("No se pueden crear partidos en el pasado.");
 
-        if (_teamRepository.GetTeamById(matchCreateDTO.HomeTeamId) == null)
-            throw new KeyNotFoundException($"Home team with ID {matchCreateDTO.HomeTeamId} not found");
+        if (matchCreateDTO.HomeTeamId == matchCreateDTO.AwayTeamId)
+            throw new ArgumentException("Un partido no puede tener el mismo equipo como local y visitante.");
 
-        if (_teamRepository.GetTeamById(matchCreateDTO.AwayTeamId) == null)
-            throw new KeyNotFoundException($"Away team with ID {matchCreateDTO.AwayTeamId} not found");
+       
+        var league = _leagueRepository.GetLeagueById(matchCreateDTO.LeagueId);
+        if (league == null)
+            throw new KeyNotFoundException($"Liga con ID {matchCreateDTO.LeagueId} no encontrada.");
 
+        
+        var homeTeam = _teamRepository.GetTeamById(matchCreateDTO.HomeTeamId);
+        if (homeTeam == null)
+            throw new KeyNotFoundException($"Equipo local con ID {matchCreateDTO.HomeTeamId} no encontrado.");
+
+        var awayTeam = _teamRepository.GetTeamById(matchCreateDTO.AwayTeamId);
+        if (awayTeam == null)
+            throw new KeyNotFoundException($"Equipo visitante con ID {matchCreateDTO.AwayTeamId} no encontrado.");
+
+       
+        if (homeTeam.LeagueId != matchCreateDTO.LeagueId)
+            throw new InvalidOperationException($"El equipo local (ID {homeTeam.Id}) no pertenece a la liga seleccionada (ID {matchCreateDTO.LeagueId}).");
+
+        if (awayTeam.LeagueId != matchCreateDTO.LeagueId)
+            throw new InvalidOperationException($"El equipo visitante (ID {awayTeam.Id}) no pertenece a la liga seleccionada (ID {matchCreateDTO.LeagueId}).");
+
+        
         var match = new Match(
             matchCreateDTO.LeagueId,
             matchCreateDTO.HomeTeamId,
@@ -57,73 +81,53 @@ public class MatchService : IMatchService
         );
 
         _repository.AddMatch(match);
+        Console.WriteLine($"Match created with ID {match.Id}");
 
-      
+        
         var homePlayers = _playerRepository.GetPlayerByTeam(match.HomeTeamId)
                                            .Where(p => p.IsActive).ToList();
         var awayPlayers = _playerRepository.GetPlayerByTeam(match.AwayTeamId)
                                            .Where(p => p.IsActive).ToList();
-              if (!homePlayers.Any())
-        throw new InvalidOperationException($"El equipo local (ID {match.HomeTeamId}) no tiene jugadores activos.");
 
+        if (!homePlayers.Any())
+            throw new InvalidOperationException($"El equipo local (ID {match.HomeTeamId}) no tiene jugadores activos.");
         if (!awayPlayers.Any())
-        throw new InvalidOperationException($"El equipo visitante (ID {match.AwayTeamId}) no tiene jugadores activos.");
+            throw new InvalidOperationException($"El equipo visitante (ID {match.AwayTeamId}) no tiene jugadores activos.");
 
       
-
         foreach (var player in homePlayers.Concat(awayPlayers))
         {
-            
             _playerMatchStatsService.CreatePlayerMatchStats(new PlayerMatchStatsDTO
             {
                 PlayerId = player.Id,
                 MatchId = match.Id,
                 Goals = 0,
                 Assists = 0,
-                YellowCards=0,
-                RedCards=0,
+                YellowCards = 0,
+                RedCards = 0,
                 MinutesPlayed = 0
             });
-
-           
-            
         }
-    var matchMarkets = new List<MarketCreateDTO>
-{
-    new MarketCreateDTO { MarketType = MarketType.OneXTwo, Description = "Resultado final" },
-    new MarketCreateDTO { MarketType = MarketType.OverUnderGoals, Description = "Más/Menos de 2.5 goles" },
-    new MarketCreateDTO { MarketType = MarketType.TotalCorners, Description = "Más/Menos de córners" },
-    new MarketCreateDTO { MarketType = MarketType.BothToScore, Description = "Ambos equipos marcan" }
-};
+        Console.WriteLine("PlayerMatchStats created for all players");
 
-    foreach (var dto in matchMarkets)
-    {
-    _marketService.CreateMarket(match.Id, dto); 
-    }
+      
+        _marketGenerator.GenerateMarketsForMatch(match.Id);
+        Console.WriteLine("Markets generated for match");
 
-   
-    var playerMarketTypes = new[]
-{
-    PlayerMarketType.Goal,
-    PlayerMarketType.Assist,
-    PlayerMarketType.YellowCard,
-    PlayerMarketType.RedCard
-    };
-
-    foreach (var player in homePlayers.Concat(awayPlayers))
-    {
-    foreach (var type in playerMarketTypes)
-    {
-        _playerMarketService.CreatePlayerMarket(match.Id, new PlayerMarketCreateDTO
+        foreach (var player in homePlayers.Concat(awayPlayers))
         {
-            PlayerId = player.Id,
-            PlayerMarketType = type
-        });
-    }
-}
+            _playerMarketGenerator.GenerateMarketsForPlayer(match.Id, player.Id);
+        }
+        Console.WriteLine("PlayerMarkets generated for all players");
+
         return match;
     }
-
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error creating match: " + ex.ToString());
+        throw; 
+    }
+}
     public IEnumerable<MatchOutputDTO> GetAllMatches() =>
     _repository.GetAllMatches().Select(MapToDTO);
 
