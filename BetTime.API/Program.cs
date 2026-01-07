@@ -74,7 +74,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyAllowedOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://zealous-coast-017cd6b03.1.azurestaticapps.net")
+        policy.WithOrigins("http://localhost:5173", "https://agreeable-pond-0c04b7003.6.azurestaticapps.net")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
