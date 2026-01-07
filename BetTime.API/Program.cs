@@ -62,7 +62,7 @@ builder.Services.AddScoped<ITransactionRepository, TransactionEFRepository>();
 builder.Services.AddScoped<IBetRepository, BetEFRepository>();
 
 
-var connectionString = builder.Configuration.GetConnectionString("ServerDB_dockernet");
+var connectionString = builder.Configuration.GetConnectionString("ServerDB_azure");
 
 builder.Services.AddDbContext<BetTimeContext>(options =>
     options.UseSqlServer(connectionString));
@@ -74,7 +74,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyAllowedOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "https://zealous-coast-017cd6b03.1.azurestaticapps.net")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
