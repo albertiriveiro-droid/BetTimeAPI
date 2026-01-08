@@ -6,8 +6,6 @@ namespace BetTime.Business
     {
         private readonly Random _rnd = new Random();
 
-      
-
         public decimal GenerateMarketOdd(
             MarketType marketType,
             string side,
@@ -30,8 +28,11 @@ namespace BetTime.Business
                     _ => 2.0m
                 },
 
-                MarketType.OverUnderGoals or MarketType.TotalCorners
-                    => RandomRange(1.7m, 2.2m),
+                MarketType.OverUnderGoals =>
+                    GenerateOverUnderOdd(threshold, side == "Over", isCorners: false),
+
+                MarketType.TotalCorners =>
+                    GenerateOverUnderOdd(threshold, side == "Over", isCorners: true),
 
                 MarketType.BothToScore => side == "Yes"
                     ? RandomRange(1.6m, 2.0m)
@@ -41,7 +42,6 @@ namespace BetTime.Business
             };
         }
 
-     
         public decimal GeneratePlayerOdd(
             PlayerMarketType type,
             PlayerPosition position,
@@ -95,7 +95,45 @@ namespace BetTime.Business
             };
         }
 
-      
+       
+        private decimal GenerateOverUnderOdd(
+            decimal threshold,
+            bool isOver,
+            bool isCorners)
+        {
+            decimal baseProbability;
+
+            if (!isCorners)
+            {
+               
+                baseProbability = threshold switch
+                {
+                    <= 1.5m => isOver ? 0.72m : 0.28m,
+                    <= 2.5m => isOver ? 0.55m : 0.45m,
+                    <= 3.5m => isOver ? 0.32m : 0.68m,
+                    <= 4.5m => isOver ? 0.18m : 0.82m,
+                    _       => isOver ? 0.10m : 0.90m
+                };
+            }
+            else
+            {
+             
+                baseProbability = threshold switch
+                {
+                    <= 8.5m  => isOver ? 0.65m : 0.35m,
+                    <= 9.5m  => isOver ? 0.55m : 0.45m,
+                    <= 10.5m => isOver ? 0.42m : 0.58m,
+                    <= 11.5m => isOver ? 0.30m : 0.70m,
+                    <= 12.5m => isOver ? 0.20m : 0.80m
+                };
+            }
+
+          
+            var variation = (decimal)(_rnd.NextDouble() * 0.06 - 0.03);
+            var finalProbability = Math.Clamp(baseProbability + variation, 0.05m, 0.95m);
+
+            return Math.Round(1 / finalProbability, 2);
+        }
 
         private decimal RandomRange(decimal min, decimal max)
         {

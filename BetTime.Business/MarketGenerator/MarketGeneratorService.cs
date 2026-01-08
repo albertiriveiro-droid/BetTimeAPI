@@ -43,7 +43,7 @@ public class MarketGeneratorService : IMarketGeneratorService
         var overUnderGoalsMarket = _marketService.CreateMarket(matchId, overUnderGoalsDto);
         createdMarkets.Add(overUnderGoalsMarket);
 
-        var goalThresholds = new decimal[] { 1.5m, 2.5m, 3.5m };
+        var goalThresholds = new decimal[] { 1.5m, 2.5m, 3.5m, 4.5m };
         foreach (var t in goalThresholds)
         {
             _selectionService.CreateSelection(overUnderGoalsMarket.Id, new MarketSelectionCreateDTO
@@ -66,7 +66,7 @@ public class MarketGeneratorService : IMarketGeneratorService
         var totalCornersMarket = _marketService.CreateMarket(matchId, totalCornersDto);
         createdMarkets.Add(totalCornersMarket);
 
-        var cornerThresholds = new decimal[] { 8.5m, 9.5m, 10.5m };
+        var cornerThresholds = new decimal[] { 8.5m, 9.5m, 10.5m, 11.5m, 12.5m };
         foreach (var t in cornerThresholds)
         {
             _selectionService.CreateSelection(totalCornersMarket.Id, new MarketSelectionCreateDTO
