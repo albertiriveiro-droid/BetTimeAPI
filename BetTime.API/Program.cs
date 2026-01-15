@@ -72,7 +72,7 @@ builder.Services.AddDbContext<BetTimeContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("MyAllowedOrigins", policy =>
+options.AddPolicy("MyAllowedOrigins", policy =>
     {
         policy.WithOrigins("http://localhost:5173", "https://agreeable-pond-0c04b7003.6.azurestaticapps.net")
               .AllowAnyHeader()
