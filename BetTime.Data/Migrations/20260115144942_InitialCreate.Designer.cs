@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BetTime.Data.Migrations
 {
     [DbContext(typeof(BetTimeContext))]
-    [Migration("20260106133917_InitialCreate")]
+    [Migration("20260115144942_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -8656,7 +8656,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 1,
                             Amount = 50m,
-                            Date = new DateTime(2026, 1, 4, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3433),
+                            Date = new DateTime(2026, 1, 13, 14, 49, 42, 54, DateTimeKind.Utc).AddTicks(4868),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -8665,7 +8665,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 2,
                             Amount = 25m,
-                            Date = new DateTime(2026, 1, 5, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3439),
+                            Date = new DateTime(2026, 1, 14, 14, 49, 42, 54, DateTimeKind.Utc).AddTicks(4873),
                             PaymentMethod = "PayPal",
                             Type = "DEPOSIT",
                             UserId = 1
@@ -8674,7 +8674,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 3,
                             Amount = 100m,
-                            Date = new DateTime(2026, 1, 3, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3440),
+                            Date = new DateTime(2026, 1, 12, 14, 49, 42, 54, DateTimeKind.Utc).AddTicks(4874),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 2
@@ -8683,7 +8683,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 4,
                             Amount = 50m,
-                            Date = new DateTime(2026, 1, 5, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3442),
+                            Date = new DateTime(2026, 1, 14, 14, 49, 42, 54, DateTimeKind.Utc).AddTicks(4875),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 2
@@ -8692,7 +8692,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 5,
                             Amount = 75m,
-                            Date = new DateTime(2026, 1, 4, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3443),
+                            Date = new DateTime(2026, 1, 13, 14, 49, 42, 54, DateTimeKind.Utc).AddTicks(4876),
                             PaymentMethod = "Tarjeta",
                             Type = "DEPOSIT",
                             UserId = 3
@@ -8701,7 +8701,7 @@ namespace BetTime.Data.Migrations
                         {
                             Id = 6,
                             Amount = 30m,
-                            Date = new DateTime(2026, 1, 5, 13, 39, 16, 322, DateTimeKind.Utc).AddTicks(3447),
+                            Date = new DateTime(2026, 1, 14, 14, 49, 42, 54, DateTimeKind.Utc).AddTicks(4877),
                             PaymentMethod = "PayPal",
                             Type = "WITHDRAW",
                             UserId = 3
@@ -8758,10 +8758,10 @@ namespace BetTime.Data.Migrations
                             Id = 2,
                             Balance = 150m,
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "albertoriveiro@hotmail.es",
+                            Email = "admin@hotmail.es",
                             Password = "pass456",
                             Role = "admin",
-                            Username = "albertorbd"
+                            Username = "admin123"
                         },
                         new
                         {
