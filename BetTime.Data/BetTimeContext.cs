@@ -158,7 +158,7 @@ modelBuilder.Entity<Market>()
            
             modelBuilder.Entity<User>().HasData(
                 new User { Id = 1, Username= "juan123", Email = "juan@example.com", Password = "pass123", Balance = 100, Role = Roles.User },
-                new User { Id = 2, Username= "albertorbd", Email = "albertoriveiro@hotmail.es", Password = "pass456", Balance = 150, Role = Roles.Admin },
+                new User { Id = 2, Username= "admin123", Email = "admin@hotmail.es", Password = "pass456", Balance = 150, Role = Roles.Admin },
                 new User { Id = 3, Username="laura234", Email = "laura@example.com", Password = "pass789", Balance = 120, Role = Roles.User }
             );
 
