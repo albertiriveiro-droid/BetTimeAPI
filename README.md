@@ -1,8 +1,7 @@
 BetTimeAPI
 
 BetTimeAPI es una plataforma de apuestas deportivas desarrollada con .NET 6 en el backend y React en el frontend. Permite a los usuarios registrarse, gestionar su cuenta, apostar en partidos y consultar estadísticas de los mismos.
-
-El frontend de la aplicación está disponible en: BetTime Frontend
+El frontend de la aplicación está disponible en: [BetTime Frontend](https://agreeable-pond-0c04b7003.6.azurestaticapps.net/)
 
 ⚡ Funcionalidades
 
